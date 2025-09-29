@@ -19,7 +19,6 @@ import { CreateDocComponent } from './pages/createDoc/createDoc.component';
 @NgModule({
   declarations: [
     AppComponent,
-    CreateDocComponent,
     
   ],
   imports: [

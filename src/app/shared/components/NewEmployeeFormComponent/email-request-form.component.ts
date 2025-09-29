@@ -1,44 +1,22 @@
-import { Component, enableProdMode } from "@angular/core";
-import RemoteFileSystemProvider from 'devextreme/file_management/remote_provider';
-import { DxFileManagerModule } from 'devextreme-angular/ui/file-manager';
-import { DxPopupModule } from 'devextreme-angular/ui/popup'; // Ensure this is correct
-import * as DxFileManagerTypes from 'devextreme-angular/ui/file-manager';
-import { Service, FileItem } from '../../shared/services/createDoc.service';
-import { AppModule } from "src/app/app.module";
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
-if (!/localhost/.test(document.location.host)) {
-  enableProdMode();
-}
-
-let modulePrefix = '';
-// @ts-ignore
-if (window && window.config?.packageConfigPaths) {
-  modulePrefix = '/app';
-}
-
 @Component({
-  templateUrl: 'createDoc.component.html',
-  styleUrls: ['./createDoc.component.scss'],
-  providers: [Service],
-  preserveWhitespaces: true,
+  selector: 'app-employee-email-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DxFileManagerModule, DxPopupModule]
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './employee-email-form.component.html',
+  styleUrls: ['./employee-email-form.component.scss']
 })
-
-export class CreateDocComponent {
+export class EmployeeEmailFormComponent implements OnInit {
   emailForm: FormGroup;
-  fileItems: FileItem[] | undefined;
-  showEmailFormPopup: boolean = false;
-
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days: number[] = Array.from({length: 31}, (_, i) => i + 1);
   years: number[] = Array.from({length: 100}, (_, i) => new Date().getFullYear() - i);
 
-  constructor(private fb: FormBuilder, private service: Service) {
+  constructor(private fb: FormBuilder) {
     this.emailForm = this.fb.group({
       prefix: [''],
       firstName: ['', Validators.required],
@@ -67,33 +45,15 @@ export class CreateDocComponent {
       gender: [''],
       date: ['']
     });
-
-    this.service.getFileItems().subscribe((items: FileItem[]) => {
-      this.fileItems = items;
-    });
-
-    this.service.fileSelected.subscribe((item: FileItem) => {
-      this.showEmailFormPopup = true;
-    });
   }
 
-  onSelectedItemChanged(e: any) {
-    const selectedItem = e.component.getSelectedItems()[0];
-    if (selectedItem && !selectedItem.isDirectory) {
-      this.service.selectFile(selectedItem);
-    }
-  }
-
-  closePopup() {
-    this.showEmailFormPopup = false;
-  }
+  ngOnInit(): void {}
 
   onSubmit(): void {
     if (this.emailForm.valid) {
       console.log('Form Submitted:', this.emailForm.value);
       alert('Form submitted successfully!');
       this.emailForm.reset();
-      this.closePopup();
     }
   }
 }

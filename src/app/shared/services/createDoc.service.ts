@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 export class FileItem {
@@ -8,7 +8,6 @@ export class FileItem {
   items?: FileItem[];
 }
 
-
 const fileItems: FileItem[] = [{
   name: 'Documents',
   isDirectory: true,
@@ -17,14 +16,14 @@ const fileItems: FileItem[] = [{
     isDirectory: true,
     items: [
       {
-        name: 'About.rtf',
+        name: 'Request Create new Email Account',
         isDirectory: false,
-        size: 1024,
+        
       },
       {
         name: 'Passwords.rtf',
         isDirectory: false,
-        size: 2048,
+        
       },
     ],
   }, {
@@ -44,7 +43,15 @@ const fileItems: FileItem[] = [{
 
 @Injectable()
 export class Service {
+  fileSelected = new EventEmitter<FileItem>();
+
   getFileItems(): Observable<FileItem[]> {
     return of(fileItems);
+  }
+
+  selectFile(item: FileItem) {
+    if (!item.isDirectory) {
+      this.fileSelected.emit(item);
+    }
   }
 }

@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
 import { LoginFormComponent, ResetPasswordFormComponent, CreateAccountFormComponent, ChangePasswordFormComponent } from './shared/components';
 import { AuthGuardService } from './shared/services';
 import { HomeComponent } from './pages/home/home.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
-import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
+import { DxDataGridModule, DxFileManagerComponent, DxFileManagerModule, DxFormModule, DxPopupComponent, DxPopupModule } from 'devextreme-angular';
 import { CreateDocComponent } from './pages/createDoc/createDoc.component';
- 
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 const routes: Routes = [
   {
@@ -57,13 +58,16 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule],
+  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule, BrowserModule, DxFileManagerModule, DxPopupModule],
   providers: [AuthGuardService],
   exports: [RouterModule],
   declarations: [
     HomeComponent,
     ProfileComponent,
-    TasksComponent
-  ]
+    TasksComponent,
+  ],
+  bootstrap: [CreateDocComponent]
 })
 export class AppRoutingModule { }
+
+platformBrowserDynamic().bootstrapModule(AppRoutingModule);

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { createComponent, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -8,12 +8,19 @@ import { AuthService, ScreenService, AppInfoService } from './shared/services';
 import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
 import { ThemeService } from './shared/services/theme.service';
-import { DxFileManagerModule, DxPopoverModule } from 'devextreme-angular';
+import { DxFileManagerModule, DxPopoverModule, DxPopupModule } from 'devextreme-angular';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { CreateDocComponent } from './pages/createDoc/createDoc.component';
+
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CreateDocComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -28,7 +35,10 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
     UnauthenticatedContentModule,
     AppRoutingModule,
     DxFileManagerModule,
-    DxPopoverModule
+    DxPopoverModule,
+    DxPopupModule,
+    FormsModule,
+    CommonModule
   ],
   providers: [
     AuthService,

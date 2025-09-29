@@ -17,7 +17,7 @@ export const navigation = [
         path: '/profile' 
       },
       {
-        text: 'Tasks',
+        text: 'Review / Approval',
         path: '/tasks'
       },
 

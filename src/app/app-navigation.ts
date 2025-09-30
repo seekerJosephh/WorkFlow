@@ -13,8 +13,8 @@ export const navigation = [
         path: '/createDoc'
       },
       {
-        text: 'Profile', 
-        path: '/profile' 
+        text: 'View Pending Docs', 
+        path: '/viewPending' 
       },
       {
         text: 'Review / Approval',

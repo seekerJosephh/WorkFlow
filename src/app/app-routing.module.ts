@@ -9,6 +9,8 @@ import { TasksComponent } from './pages/tasks/tasks.component';
 import { DxDataGridModule, DxFileManagerComponent, DxFileManagerModule, DxFormModule, DxPopupComponent, DxPopupModule } from 'devextreme-angular';
 import { CreateDocComponent } from './pages/createDoc/createDoc.component';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
+
 
 const routes: Routes = [
   {
@@ -26,6 +28,11 @@ const routes: Routes = [
     component: ProfileComponent,
     canActivate: [ AuthGuardService ]
   },
+  {
+    path: 'viewPending',
+    component: ViewPendingComponent,
+    canActivate: [ AuthGuardService ]
+  }, 
   {
     path: 'home',
     component: HomeComponent,
@@ -66,7 +73,7 @@ const routes: Routes = [
     ProfileComponent,
     TasksComponent,
   ],
-  bootstrap: [CreateDocComponent]
+  bootstrap: [ ViewPendingComponent]
 })
 export class AppRoutingModule { }
 

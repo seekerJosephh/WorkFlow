@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RequestEmailFormComponent } from "src/app/shared/components/request-email-form/request-email-form.component";
 
 if (!/localhost/.test(document.location.host)) {
   enableProdMode();
@@ -20,68 +21,83 @@ if (window && window.config?.packageConfigPaths) {
   modulePrefix = '/app';
 }
 
+
 @Component({
   templateUrl: 'createDoc.component.html',
   styleUrls: ['./createDoc.component.scss'],
   providers: [Service],
   preserveWhitespaces: true,
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DxFileManagerModule, DxPopupModule]
+  imports: [CommonModule, ReactiveFormsModule, DxFileManagerModule, DxPopupModule, RequestEmailFormComponent]
 })
 
 export class CreateDocComponent {
   emailForm: FormGroup;
   fileItems: FileItem[] | undefined;
   showEmailFormPopup: boolean = false;
+ 
+  get users() {
+    return this.emailForm.get('users') as any;
+  }
+
 
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days: number[] = Array.from({length: 31}, (_, i) => i + 1);
   years: number[] = Array.from({length: 100}, (_, i) => new Date().getFullYear() - i);
 
+
   constructor(private fb: FormBuilder, private service: Service) {
     this.emailForm = this.fb.group({
-      prefix: [''],
-      firstName: ['', Validators.required],
-      middleName: [''],
-      lastName: ['', Validators.required],
-      preferredName: [''],
-      dobMonth: [''],
-      dobDay: [''],
-      dobYear: [''],
-      nicPassport: ['', Validators.required],
-      resStreet1: ['', Validators.required],
-      resStreet2: [''],
-      resCity: ['', Validators.required],
-      resState: ['', Validators.required],
-      resPostCode: ['', Validators.required],
-      resCountry: ['', Validators.required],
-      permStreet1: ['', Validators.required],
-      permStreet2: [''],
-      permCity: ['', Validators.required],
-      permState: ['', Validators.required],
-      permPostCode: ['', Validators.required],
-      permCountry: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern('^[0-9]{3}-[0-9]{3}-[0-9]{4}$')]],
-      personalEmail: ['', [Validators.required, Validators.email]],
-      nationality: ['', Validators.required],
-      gender: [''],
-      date: ['']
+      isEmail: [true],
+      isADUser: [false],
+      isNew: [false],
+      isDelete: [false],
+      isChange: [false],
+      date: [''],
+      department: [''],
+      applicantName: [''],
+      applicantPhone: [''],
+      revised: [''],
+      users: this.fb.array([this.createUserRow()]),
+      preparedBy: [''],
+      checkedBy: [''],
+      verifiedBy: [''],
+      approvedBy: [''],
+      purpose: ['']
     });
 
     this.service.getFileItems().subscribe((items: FileItem[]) => {
       this.fileItems = items;
     });
+  }
 
-    this.service.fileSelected.subscribe((item: FileItem) => {
-      this.showEmailFormPopup = true;
+  createUserRow(): FormGroup {
+    return this.fb.group({
+      id: [''],
+      sex: [''],
+      firstName: [''],
+      familyName: [''],
+      internalLine: [''],
+      outsideLine: [''],
+      section: [''],
+      position: [''],
+      beforeChange: [''],
+      afterChange: ['']
     });
   }
 
-  onSelectedItemChanged(e: any) {
-    const selectedItem = e.component.getSelectedItems()[0];
-    if (selectedItem && !selectedItem.isDirectory) {
-      this.service.selectFile(selectedItem);
+  addUserRow() {
+    this.users.push(this.createUserRow());
+  }
+
+  deleteUserRow() { 
+    if (this.users.length > 1) {
+      this.users.removeAt(this.users.length - 1);
     }
+  }
+
+  displayImagePopup(event: any) {
+    this.showEmailFormPopup = true;
   }
 
   closePopup() {
@@ -90,10 +106,11 @@ export class CreateDocComponent {
 
   onSubmit(): void {
     if (this.emailForm.valid) {
-      console.log('Form Submitted:', this.emailForm.value);
-      alert('Form submitted successfully!');
+      console.log('Form Submitted!' ,this.emailForm.value);
+      alert('Form Submitted successfully!');
       this.emailForm.reset();
       this.closePopup();
     }
   }
+
 }

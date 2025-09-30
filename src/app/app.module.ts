@@ -10,16 +10,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { ThemeService } from './shared/services/theme.service';
 import { DxFileManagerModule, DxPopoverModule, DxPopupModule } from 'devextreme-angular';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CreateDocComponent } from './pages/createDoc/createDoc.component';
+import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    
   ],
   imports: [
     BrowserModule,
@@ -37,7 +37,8 @@ import { CreateDocComponent } from './pages/createDoc/createDoc.component';
     DxPopoverModule,
     DxPopupModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule
   ],
   providers: [
     AuthService,

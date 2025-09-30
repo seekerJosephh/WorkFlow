@@ -1,0 +1,119 @@
+<div class="container mx-auto p-6 max-w-6xl" style="overflow-y: auto;">
+  <h5 class="text-2xl font-bold text-center text-blue-900 mb-2">Application for Create, Change and Delete E-mail/User AD</h5>
+  <hr class="border-blue-900 mb-4">
+
+  <form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="bg-white p-6 rounded-lg shadow-md">
+    <!-- Top Section -->
+    <div class="grid grid-cols-4 gap-4 mb-4">
+      <div class="col-span-2 flex flex-col">
+        <label class="font-semibold mb-1">Type:</label>
+        <div>
+          <label class="mr-2"><input type="checkbox" formControlName="isEmail"> EMAIL</label>
+          <label><input type="checkbox" formControlName="isADUser"> AD USER</label>
+        </div>
+      </div>
+      <div class="col-span-2 flex flex-col">
+        <label class="font-semibold mb-1">Classification:</label>
+        <div>
+          <label class="mr-2"><input type="checkbox" formControlName="isNew"> New registration</label>
+          <label class="mr-2"><input type="checkbox" formControlName="isDelete"> Deletion</label>
+          <label><input type="checkbox" formControlName="isChange"> Change</label>
+        </div>
+      </div>
+      <div>
+        <label class="font-semibold mb-1">Date:</label>
+        <input type="date" formControlName="date" class="border rounded p-1">
+      </div>
+      <div>
+        <label class="font-semibold mb-1">Department:</label>
+        <input type="text" formControlName="department" class="border rounded p-1">
+      </div>
+      <div>
+        <label class="font-semibold mb-1">Name:</label>
+        <input type="text" formControlName="applicantName" class="border rounded p-1">
+      </div>
+      <div>
+        <label class="font-semibold mb-1">Phone:</label>
+        <input type="text" formControlName="applicantPhone" class="border rounded p-1">
+      </div>
+      <div>
+        <label class="font-semibold mb-1">Revised:</label>
+        <input type="text" formControlName="revised" class="border rounded p-1">
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="overflow-x-auto mb-4">
+      <table class="min-w-full border text-xs">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border px-2 py-1">ID</th>
+            <th class="border px-2 py-1">Sex</th>
+            <th class="border px-2 py-1">First Name</th>
+            <th class="border px-2 py-1">Family Name</th>
+            <th class="border px-2 py-1">Internal Line</th>
+            <th class="border px-2 py-1">Outside Line</th>
+            <th class="border px-2 py-1">Section</th>
+            <th class="border px-2 py-1">Position</th>
+            <th class="border px-2 py-1">Before Change</th>
+            <th class="border px-2 py-1">After Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users.controls; let i = index" [formGroupName]="i">
+            <td class="border px-2 py-1"><input formControlName="id" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1">
+              <select formControlName="sex" class="w-full border rounded p-1">
+                <option value="">Select</option>
+                <option value="M">M</option>
+                <option value="F">F</option>
+              </select>
+            </td>
+            <td class="border px-2 py-1"><input formControlName="firstName" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="familyName" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="internalLine" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="outsideLine" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="section" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="position" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="beforeChange" class="w-full border rounded p-1"></td>
+            <td class="border px-2 py-1"><input formControlName="afterChange" class="w-full border rounded p-1"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" class="bg-green-500 text-white px-4 py-2 rounded" (click)="addUserRow()">Add Row</button>
+      <button type="button" class="bg-red-500 text-white px-4 py-2 rounded col-span-2" (click)="deleteUserRow()">Delete Row</button>
+ 
+      
+    </div>
+
+    <!-- IT Section --> 
+    <div class="grid grid-cols-4 gap-4 mb-4">
+      <div>
+        <label class="block text-blue-900 font-semibold mb-2">Prepared by</label>
+        <input formControlName="preparedBy" type="text" class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label class="block text-blue-900 font-semibold mb-2">Checked by</label>
+        <input formControlName="checkedBy" type="text" class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label class="block text-blue-900 font-semibold mb-2">Verified by</label>
+        <input formControlName="verifiedBy" type="text" class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label class="block text-blue-900 font-semibold mb-2">Approved by</label>
+        <input formControlName="approvedBy" type="text" class="w-full p-2 border rounded">
+      </div>
+    </div>
+
+    <!-- Purpose of Application -->
+    <div class="mb-4">
+      <label class="block text-blue-900 font-semibold mb-2">Purpose of Application</label>
+      <textarea formControlName="purpose" rows="2" class="w-full p-2 border rounded"></textarea>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" [disabled]="emailForm.invalid" class="bg-green-500 text-white px-4 py-2 rounded">Submit Form</button>
+    </div>
+  </form>
+</div>

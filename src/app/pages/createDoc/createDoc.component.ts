@@ -6,20 +6,12 @@ import * as DxFileManagerTypes from 'devextreme-angular/ui/file-manager';
 import { Service, FileItem } from '../../shared/services/createDoc.service';
 import { AppModule } from "src/app/app.module";
 import { Router } from "@angular/router";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RequestEmailFormComponent } from "src/app/shared/components/request-email-form/request-email-form.component";
 
-if (!/localhost/.test(document.location.host)) {
-  enableProdMode();
-}
 
-let modulePrefix = '';
-// @ts-ignore
-if (window && window.config?.packageConfigPaths) {
-  modulePrefix = '/app';
-}
 
 
 @Component({
@@ -35,9 +27,11 @@ export class CreateDocComponent {
   emailForm: FormGroup;
   fileItems: FileItem[] | undefined;
   showEmailFormPopup: boolean = false;
+  selectedFile?: FileItem;
  
-  get users() {
-    return this.emailForm.get('users') as any;
+
+  get users(): FormArray {
+    return this.emailForm.get('users') as FormArray;
   }
 
 
@@ -47,13 +41,8 @@ export class CreateDocComponent {
 
 
   constructor(private fb: FormBuilder, private service: Service) {
-    this.emailForm = this.fb.group({
-      isEmail: [true],
-      isADUser: [false],
-      isNew: [false],
-      isDelete: [false],
-      isChange: [false],
-      date: [''],
+      this.emailForm = this.fb.group({
+      date: ['A'],
       department: [''],
       applicantName: [''],
       applicantPhone: [''],
@@ -71,32 +60,26 @@ export class CreateDocComponent {
     });
   }
 
+
   createUserRow(): FormGroup {
-    return this.fb.group({
-      id: [''],
-      sex: [''],
-      firstName: [''],
-      familyName: [''],
-      internalLine: [''],
-      outsideLine: [''],
-      section: [''],
-      position: [''],
-      beforeChange: [''],
-      afterChange: ['']
-    });
+      return this.fb.group({
+          id: [''],
+          sex: [''],
+          firstName: [''],
+          familyName: [''],
+          section: [''],
+          position: [''],
+          beforeChange: [''],
+          afterChnage: [''],
+          classification: [''],
+          isADUser: [false],
+
+      });
   }
 
-  addUserRow() {
-    this.users.push(this.createUserRow());
-  }
-
-  deleteUserRow() { 
-    if (this.users.length > 1) {
-      this.users.removeAt(this.users.length - 1);
-    }
-  }
-
+ 
   displayImagePopup(event: any) {
+    this.selectedFile = event.file;
     this.showEmailFormPopup = true;
   }
 

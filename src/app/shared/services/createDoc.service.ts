@@ -23,7 +23,6 @@ const fileItems: FileItem[] = [{
       {
         name: 'Passwords.rtf',
         isDirectory: false,
-        
       },
     ],
   }, {

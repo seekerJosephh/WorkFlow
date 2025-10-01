@@ -1,7 +1,6 @@
 <dx-file-manager
   id="fileManager"
   [fileSystemProvider]="fileItems"
-  currentPath="Widescreen"
   (onSelectedFileOpened)="displayImagePopup($event)"
 >
   <dxo-permissions
@@ -17,10 +16,13 @@
 </dx-file-manager>
 <dx-popup
   [(visible)]="showEmailFormPopup"
-  [hideOnOutsideClick]="true"
-  [width]="1200"
+  [width]="1400"
   [height]="900"
   [showCloseButton]="true"
 >
-  <app-request-email-form></app-request-email-form>
+  <ng-container [ngSwitch]="selectedFile?.name">
+    <app-request-email-form *ngSwitchCase="'Request Create new Email Account'" ></app-request-email-form>
+    <!-- For more selector  -->
+    <div *ngSwitchDefault>Select a file to view details</div>
+  </ng-container>
 </dx-popup>

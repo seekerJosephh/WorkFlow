@@ -1,12 +1,12 @@
-
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-
+import { FormService, FormSubmission, UserFormData } from "../../services/request-email-form.service";
 
 @Component({
     selector: 'app-request-email-form',
     templateUrl: 'request-email-form.component.html',
+    styleUrls: ['./request-email-form.component.css'],
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule]
 })
@@ -16,29 +16,31 @@ export class RequestEmailFormComponent implements OnInit {
   referForm!: FormGroup;
   isReferModalOpen = false;
   hasSearched = false;
-  filteredPeople: { id: string; name: string; section: string }[] = [];
-  private people: { id: string; name: string; section: string }[] = [
-    { id: "001", name: "A", section: "IT" },
-    { id: "002", name: "B", section: "Assy" },
-    { id: "003", name: "C", section: "FC" },
-    { id: "004", name: "D", section: "QA" },
-    { id: "005", name: "E", section: "IT" }
+  isPreviewVisible = false;
+  submissionStatus: 'success' | 'error' | null = null;
+  submissionMessage: string = '';
+  filteredPeople: { id: string; name: string; section: string; email: string }[] = [];
+  private people: { id: string; name: string; section: string; email: string }[] = [
+    { id: "001", name: "Chetra Pang", section: "IT", email: "chetrapang@scws.kh" },
+    { id: "002", name: "Lyhem Heng", section: "Assy", email: "lyhemheng@scws.kh" },
+    { id: "003", name: "Sophat", section: "FC", email: "sophat@scws.kh" },
+    { id: "004", name: "Kosal", section: "QA", email: "kosal@scws.kh" },
+    { id: "005", name: "Sambath", section: "IT", email: "sambath@scws.kh" },
   ];
 
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days: number[] = Array.from({ length: 31 }, (_, i) => i + 1);
   years: number[] = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private formService: FormService) {}
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     const today = new Date().toISOString().split('T')[0];
     this.emailForm = this.fb.group({
       date: [today, Validators.required],
       department: ['', Validators.required],
       applicantName: ['', Validators.required],
       applicantPhone: ['', Validators.required],
-      revised: [''],
       users: this.fb.array([this.createUserRow()]),
       preparedBy: ['', Validators.required],
       checkedBy: ['', Validators.required],
@@ -47,23 +49,21 @@ export class RequestEmailFormComponent implements OnInit {
       ITverifiedBy: ['Mr.C', Validators.required],
       ITapprovedBy: ['Mr.D', Validators.required],
       purpose: ['', Validators.required]
-      });
-      this.referForm = this.fb.group({
+    });
+    this.referForm = this.fb.group({
       searchId: [''],
       searchName: [''],
       searchSection: ['']
     });
     this.filteredPeople = [...this.people];
-    }
+  }
 
-
-    get users(): FormArray {
+  get users(): FormArray {
     return this.emailForm.get('users') as FormArray;
-    }
+  }
 
-
-    createUserRow(): FormGroup {
-      const userGroup = this.fb.group({
+  createUserRow(): FormGroup {
+    const userGroup = this.fb.group({
       classification: ['New registration', Validators.required],
       isEmail: [false],
       isADUser: [false],
@@ -87,26 +87,25 @@ export class RequestEmailFormComponent implements OnInit {
       positionAfterChange: [''],
       beforeChange: [''],
       afterChange: ['']
-      });
+    });
 
-      userGroup.get('classification')?.valueChanges.subscribe(value => {
-        const beforeChangeControl = userGroup.get('beforeChange');
-        const afterChangeControl = userGroup.get('afterChange');
+    userGroup.get('classification')?.valueChanges.subscribe(value => {
+      const beforeChangeControl = userGroup.get('beforeChange');
+      const afterChangeControl = userGroup.get('afterChange');
 
-        if (value === 'Change'){
-          beforeChangeControl?.setValidators([Validators.required]);
-          afterChangeControl?.setValidators([Validators.required]);
-        } else {
-          beforeChangeControl?.clearValidators();
-          afterChangeControl?.clearValidators();
-        }
-        beforeChangeControl?.updateValueAndValidity();
-        afterChangeControl?.updateValueAndValidity();
-      });
+      if (value === 'Change') {
+        beforeChangeControl?.setValidators([Validators.required]);
+        afterChangeControl?.setValidators([Validators.required]);
+      } else {
+        beforeChangeControl?.clearValidators();
+        afterChangeControl?.clearValidators();
+      }
+      beforeChangeControl?.updateValueAndValidity();
+      afterChangeControl?.updateValueAndValidity();
+    });
 
-      return userGroup;
-    }
-
+    return userGroup;
+  }
 
   addUserRow() {
     this.users.push(this.createUserRow());
@@ -117,6 +116,7 @@ export class RequestEmailFormComponent implements OnInit {
       this.users.removeAt(this.users.length - 1);
     }
   }
+
   openReferModal() {
     this.isReferModalOpen = true;
     this.resetSearch();
@@ -126,6 +126,7 @@ export class RequestEmailFormComponent implements OnInit {
     this.isReferModalOpen = false;
     this.hasSearched = false;
   }
+
   searchPeople() {
     const { searchId, searchName, searchSection } = this.referForm.value;
     if (searchId || searchName || searchSection) {
@@ -147,7 +148,6 @@ export class RequestEmailFormComponent implements OnInit {
     this.hasSearched = false;
   }
 
-
   selectPerson(name: string) {
     this.emailForm.get('checkedBy')?.setValue(name);
     this.closeReferModal();
@@ -156,9 +156,41 @@ export class RequestEmailFormComponent implements OnInit {
   isAnyClassificationChange(): boolean {
     return this.users.controls.some(control => control.get('classification')?.value === 'Change');
   }
+
+  saveDocument(): void {
+    if (this.emailForm) {
+      this.isPreviewVisible = true;
+    } else {
+      console.log('Form is not valid');
+    }
+  }
+
+  backToEdit(): void {
+    this.isPreviewVisible = false;
+  }
+
   onSubmit() {
-    console.log('Form Value:', this.emailForm.value);
-    // console.log('Form Valid:', this.emailForm.valid);
-    // console.log('Users Array:', this.users.value);
+      if (this.emailForm) {
+          const formData: FormSubmission = this.emailForm.value;
+          formData.ITcheckedBy = this.emailForm.get('ITcheckBy')?.value;
+          console.log('Form Data:', JSON.stringify(formData, null, 2)); 
+          this.formService.submitForm(formData).subscribe({
+              next: (response) => {
+                  this.submissionStatus = 'success';
+                  this.submissionMessage = response.message || 'Form submitted successfully';
+                  this.users.push(this.createUserRow());
+                  this.isPreviewVisible = false;
+              },
+              error: (error) => {
+                  this.submissionStatus = 'error';
+                  this.submissionMessage = error.message || 'Failed to submit form';
+                  console.error('Submission error:', error);
+              }
+          });
+      } else {
+          this.submissionStatus = 'error';
+          this.submissionMessage = 'Please fill out all required fields correctly.';
+          console.log('Users Errors:', this.users.controls.map(control => control.errors));
+      }
   }
 }

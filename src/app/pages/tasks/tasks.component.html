@@ -1,70 +1,77 @@
-<h2 class="content-block">Review/Approval</h2>
+<h2 class="content-block">Approved Requests History</h2>
 
-<dx-data-grid class="dx-card wide-card"
+<dx-data-grid
+  class="dx-card wide-card"
   [dataSource]="dataSource"
-  [showBorders]="false"
+  [showBorders]="true"
   [focusedRowEnabled]="true"
   [focusedRowIndex]="0"
   [columnAutoWidth]="true"
-  [columnHidingEnabled]="true">
+  [columnHidingEnabled]="false">
 
   <dxo-paging [pageSize]="10"></dxo-paging>
   <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
   <dxo-filter-row [visible]="true"></dxo-filter-row>
 
   <dxi-column
-    dataField="Task_ID"
+    dataField="Id"
     [width]="90"
+    caption="Form ID"
     [hidingPriority]="2">
   </dxi-column>
   <dxi-column
-    dataField="Task_Subject"
+    dataField="Purpose"
     [width]="190"
-    caption="Subject"
+    caption="Purpose"
     [hidingPriority]="8">
   </dxi-column>
   <dxi-column
-    dataField="Task_Status"
+    dataField="OverallStatus"
     caption="Status"
     [hidingPriority]="6">
-  </dxi-column>
-  <dxi-column
-    dataField="Task_Priority"
-    caption="Priority"
-    [hidingPriority]="5">
     <dxo-lookup
-      [dataSource]="priority"
+      [dataSource]="statusOptions"
       valueExpr="value"
       displayExpr="name">
     </dxo-lookup>
   </dxi-column>
   <dxi-column
-    dataField="ResponsibleEmployee.Employee_Full_Name"
-    caption="Assigned To"
+    dataField="RequestCheckedStatus"
+    caption="Request Status"
+    [hidingPriority]="5">
+    <dxo-lookup
+      [dataSource]="statusOptions"
+      valueExpr="value"
+      displayExpr="name">
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column
+    dataField="ApplicantName"
+    caption="Applicant"
     [allowSorting]="false"
     [hidingPriority]="7">
   </dxi-column>
   <dxi-column
-    dataField="Task_Start_Date"
-    caption="Start Date"
+    dataField="CreatedAt"
+    caption="Created Date"
     dataType="date"
+    format="yyyy-MM-dd"
     [hidingPriority]="3">
   </dxi-column>
   <dxi-column
-    dataField="Task_Due_Date"
-    caption="Due Date"
+    dataField="FormDate"
+    caption="Form Date"
     dataType="date"
     [hidingPriority]="4">
   </dxi-column>
   <dxi-column
-    dataField="Task_Priority"
-    caption="Priority"
-    name="Priority"
+    dataField="Department"
+    caption="Department"
     [hidingPriority]="1">
   </dxi-column>
   <dxi-column
-    dataField="Task_Completion"
-    caption="Completion"
+    dataField="ITApprovedBy"
+    caption="Approved By"
     [hidingPriority]="0">
   </dxi-column>
 </dx-data-grid>

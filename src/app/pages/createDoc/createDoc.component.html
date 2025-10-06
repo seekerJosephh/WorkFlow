@@ -19,10 +19,14 @@
   [width]="1600"
   [height]="900"
   [showCloseButton]="true"
+  (onHiding)="confirmClose($event)"
+
 >
-  <ng-container [ngSwitch]="selectedFile?.name">
-    <app-request-email-form *ngSwitchCase="'Request Create new Email Account'" ></app-request-email-form>
-    <!-- For more selector  -->
-    <div *ngSwitchDefault>Select a file to view details</div>
-  </ng-container>
+  <div class="popup-scroll-container" (scroll)="onScroll($event)">
+    <ng-container [ngSwitch]="selectedFile?.name">
+      <app-request-email-form *ngSwitchCase="'Request Create new Email Account'"></app-request-email-form>
+      <div *ngSwitchDefault>Select a file to view details</div>
+    </ng-container>
+  </div>
+  
 </dx-popup>

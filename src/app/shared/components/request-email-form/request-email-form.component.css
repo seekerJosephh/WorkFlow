@@ -1,8 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
 .container {
     font-family: "Aptos Narrow", sans-serif !important;
 }
-
 
 /* Ensure all child elements inherit the font */
 .container * {
@@ -11,7 +9,7 @@
 @font-face {
     font-family: "Aptos Narrow";
     src: url("/themes/fonts/Aptos-Narrow.woff2") format("woff2"),
-        url("/themes/fonts/Aptos-Narrow.ttf") format("truetype");
+         url("/themes/fonts/Aptos-Narrow.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
@@ -23,4 +21,3 @@
 .container * {
     font-family: inherit !important;
 }
-

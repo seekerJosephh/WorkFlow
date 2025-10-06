@@ -1,7 +1,8 @@
-<div class="container mx-auto p-6 max-w-6xl" style="overflow-y: auto; max-height: 80vh; border: 2px solid #1E40AF; border-radius: 8px; background-color: #E0E7FF; max-width: 2000px">
+<div class="container mx-auto p-6 max-w-6xl" style="overflow-y: auto; scroll-behavior: smooth; max-height: 80vh; border: 2px solid #1E40AF; border-radius: 8px; background-color: #E0E7FF; max-width: 1800px; font-family: 'Aptos Narrow', sans-serif !important;">
   <h5 class="text-2xl font-bold text-center text-blue-900 mb-2">Application for Create, Change and Delete E-mail/User AD</h5>
   <hr class="border-blue-900 mb-4">
-<form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="bg-white p-8 rounded-xl shadow-lg max-w-screen mx-auto">
+<form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="bg-white p-8 rounded-xl shadow-lg max-w-full mx-auto">
+
   <!-- Top Section -->
   <div class="grid grid-cols-1 gap-6 mb-6">
     <div class="text-center">
@@ -9,217 +10,218 @@
         <span class="font-bold text-base">Noted:</span> If you have requests for "New registration," "Change," or "Deletion," please use one sheet for each.
       </p>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div>
-        <label for="date" class="block text-sm font-semibold text-blue-900 mb-1">Current Date:</label>
-        <input id="date" type="date" formControlName="date" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
-        <input type="text" formControlName="department" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
-        <input type="text" formControlName="applicantName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
-        <input type="text" formControlName="applicantPhone" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Revised:</label>
-        <input type="text" formControlName="revised" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-    </div>
-  </div>
-
-  <!-- Table Section -->
-  <div class="overflow-x-auto mb-8">
-    <table class="min-w-full border-2 border-gray-400 text-sm">
-      <thead>
-        <tr class="bg-blue-50 text-blue-900 font-semibold">
-          <th class="border-2 border-gray-400 px-4 py-2">Classification</th>
-          <th class="border-2 border-gray-400 px-4 py-2">User Email</th>
-          <th class="border-2 border-gray-400 px-4 py-2">User AD</th>
-          <th class="border-2 border-gray-400 px-4 py-2">ID</th>
-          <th class="border-2 border-gray-400 px-4 py-2">Sex</th>
-          <th class="border-2 border-gray-400 px-4 py-2">First Name</th>
-          <th class="border-2 border-gray-400 px-4 py-2">Family Name</th>
-          <th class="border-2 border-gray-400 px-4 py-2">Section</th>
-          <th class="border-2 border-gray-400 px-4 py-2">Position</th>
-          <th class="border-2 border-gray-400 px-4 py-2" *ngIf="isAnyClassificationChange()">Change&nbsp;Details</th>
-        </tr>
-      </thead>
-      <tbody formArrayName="users">
-        <tr *ngFor="let user of users.controls; let i = index" [formGroupName]="i">
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <select formControlName="classification" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="New registration">New registration</option>
-              <option value="Deletion">Deletion</option>
-              <option value="Change">Change</option>
-            </select>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <input type="checkbox" formControlName="isEmail" class="h-5 w-5 text-blue-600">
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <input type="checkbox" formControlName="isADUser" class="h-5 w-5 text-blue-600">
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else idInput">
-              <div>
-                <input formControlName="idBeforeChange" placeholder="Before Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <input formControlName="idAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-            </div>
-            <ng-template #idInput>
-              <input formControlName="id" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else sexInput">
-              <div>
-                <select formControlName="sexBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                </select>
-              </div>
-              <div>
-                <select formControlName="sexAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                </select>
-              </div>
-            </div>
-            <ng-template #sexInput>
-              <select formControlName="sex" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-              </select>
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else firstNameInput">
-              <div>
-                <input formControlName="firstNameBeforeChange" placeholder="Before Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <input formControlName="firstNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-            </div>
-            <ng-template #firstNameInput>
-              <input formControlName="firstName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else familyNameInput">
-              <div>
-                <input formControlName="familyNameBeforeChange" placeholder="Before Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <input formControlName="familyNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-            </div>
-            <ng-template #familyNameInput>
-              <input formControlName="familyName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else sectionInput">
-              <div>
-                <select formControlName="sectionBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="IT">IT</option>
-                  <option value="Assy">Assy</option>
-                  <option value="FC">FC</option>
-                  <option value="QA">QA</option>
-                </select>
-              </div>
-              <div>
-                <select formControlName="sectionAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="IT">IT</option>
-                  <option value="Assy">Assy</option>
-                  <option value="FC">FC</option>
-                  <option value="QA">QA</option>
-                </select>
-              </div>
-            </div>
-            <ng-template #sectionInput>
-              <select formControlName="section" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="IT">IT</option>
-                <option value="Assy">Assy</option>
-                <option value="FC">FC</option>
-                <option value="QA">QA</option>
-              </select>
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2">
-            <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else positionInput">
-              <div>
-                <select formControlName="positionBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="Staff">Staff</option>
-                  <option value="Clerk">Clerk</option>
-                  <option value="SC">SC</option>
-                  <option value="Leader">Leader</option>
-                </select>
-              </div>
-              <div>
-                <select formControlName="positionAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                  <option value="Staff">Staff</option>
-                  <option value="Clerk">Clerk</option>
-                  <option value="SC">SC</option>
-                  <option value="Leader">Leader</option>
-                </select>
-              </div>
-            </div>
-            <ng-template #positionInput>
-              <select formControlName="position" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="Staff">Staff</option>
-                <option value="Clerk">Clerk</option>
-                <option value="SC">SC</option>
-                <option value="Leader">Leader</option>
-              </select>
-            </ng-template>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.get('classification')?.value === 'Change'">
-            <div class="flex flex-col gap-2">
-              <div>
-                <label class="block text-xs font-semibold text-blue-900 mb-1">Before&nbsp;Change</label>
-                
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-blue-900 mb-1">After&nbsp;Change</label>
-                
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="flex gap-4 mt-4">
-      <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="addUserRow()">Add Row</button>
-      <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="deleteUserRow()">Delete Row</button>
-    </div>
   </div>
 
   <!-- Request Section (Card Design) -->
   <div class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
-    <label class="block text-lg font-bold text-red-900 mb-4">Request Section</label>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-        <input formControlName="preparedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      <div class="relative">
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-        <div class="flex items-center gap-2">
-          <input formControlName="checkedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal()">Refer</button>
+      <label class="block text-lg font-bold text-red-900 mb-4">Request Section</label>
+      
+      <div class="grid grid-cols-1 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label for="date" class="block text-sm font-semibold text-blue-900 mb-1">Current Date:</label>
+            <input id="date" type="date" formControlName="date" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
+            <input type="text" formControlName="department" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
+            <input type="text" formControlName="applicantName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
+            <input type="text" formControlName="applicantPhone" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- Purpose of Application -->
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
+        <textarea formControlName="purpose" rows="4" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+      </div>
+
+      <!-- Table Section -->
+      <div class="overflow-x-auto mb-8">
+        <table class="min-w-full border-2 border-gray-400 text-sm">
+          <thead>
+            <tr class="bg-blue-50 text-blue-900 font-semibold">
+              <th class="border-2 border-gray-400 px-4 py-2">Classification</th>
+              <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;Email</th>
+              <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;AD</th>
+              <th class="border-2 border-gray-400 px-4 py-2">ID</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Sex</th>
+              <th class="border-2 border-gray-400 px-4 py-2">First Name</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Family Name</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Section</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Position</th>
+              <th class="border-2 border-gray-400 px-4 py-2" *ngIf="isAnyClassificationChange()">Change&nbsp;Details</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="users">
+            <tr *ngFor="let user of users.controls; let i = index" [formGroupName]="i">
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <select formControlName="classification" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option value="New registration">New registration</option>
+                  <option value="Deletion">Deletion</option>
+                  <option value="Change">Change</option>
+                </select>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2 text-center">
+                <input type="checkbox" formControlName="isEmail" class="h-5 w-5 text-blue-600">
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2 text-center">
+                <input type="checkbox" formControlName="isADUser" class="h-5 w-5 text-blue-600">
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else idInput">
+                  <div>
+                    <input formControlName="idBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
+                 
+                </div>
+                <ng-template #idInput>
+                  <input formControlName="id" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else sexInput">
+                  <div>
+                    <select formControlName="sexBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="M">Male</option>
+                      <option value="F">Female</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select formControlName="sexAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="M">Male</option>
+                      <option value="F">Female</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #sexInput>
+                  <select formControlName="sex" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                  </select>
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else firstNameInput">
+                  <div>
+                    <input formControlName="firstNameBeforeChange" placeholder="Before Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
+                  <div>
+                    <input formControlName="firstNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
+                </div>
+                <ng-template #firstNameInput>
+                  <input formControlName="firstName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else familyNameInput">
+                  <div>
+                    <input formControlName="familyNameBeforeChange" placeholder="Before Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
+                  <div>
+                    <input formControlName="familyNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
+                </div>
+                <ng-template #familyNameInput>
+                  <input formControlName="familyName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else sectionInput">
+                  <div>
+                    <select formControlName="sectionBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="IT">IT</option>
+                      <option value="Assy">Assy</option>
+                      <option value="FC">FC</option>
+                      <option value="QA">QA</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select formControlName="sectionAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="IT">IT</option>
+                      <option value="Assy">Assy</option>
+                      <option value="FC">FC</option>
+                      <option value="QA">QA</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #sectionInput>
+                  <select formControlName="section" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="IT">IT</option>
+                    <option value="Assy">Assy</option>
+                    <option value="FC">FC</option>
+                    <option value="QA">QA</option>
+                  </select>
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else positionInput">
+                  <div>
+                    <select formControlName="positionBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="Staff">Staff</option>
+                      <option value="Clerk">Clerk</option>
+                      <option value="SC">SC</option>
+                      <option value="Leader">Leader</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select formControlName="positionAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="Staff">Staff</option>
+                      <option value="Clerk">Clerk</option>
+                      <option value="SC">SC</option>
+                      <option value="Leader">Leader</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #positionInput>
+                  <select formControlName="position" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Staff">Staff</option>
+                    <option value="Clerk">Clerk</option>
+                    <option value="SC">SC</option>
+                    <option value="Leader">Leader</option>
+                  </select> 
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.get('classification')?.value === 'Change'">
+                <div class="flex flex-col gap-2">
+                  <div>
+                    <label class="block text-xs font-semibold text-blue-900 mb-1">Before&nbsp;Change</label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-blue-900 mb-1">After&nbsp;Change</label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="flex gap-4 mt-4">
+          <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="addUserRow()">Add Row</button>
+          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="deleteUserRow()">Delete Row</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
+          <input formControlName="preparedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="relative">
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
+          <div class="flex items-center gap-2">
+            <input formControlName="checkedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal()">Refer</button>
+          </div>
+        </div>
+      </div>
   </div>
 
   <!-- IT Section (Card Design) -->
@@ -232,7 +234,7 @@
       </div>
       <div>
         <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-        <input placeholder="Mr.B" value="Mr.B" formControlName="ITcheckBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <input placeholder="Mr.B" value="Mr.B" formControlName="ITcheckedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
       </div>
       <div>
         <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
@@ -245,20 +247,195 @@
     </div>
   </div>
 
-  <!-- Purpose of Application -->
-  <div class="mb-6">
-    <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
-    <textarea formControlName="purpose" rows="4" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+  <div class="text-center" style="padding-bottom: 25px;">
+    <button type="button" (click)="saveDocument()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Save&nbsp;Document</button>
   </div>
 
-  <div class="text-center">
-    <button type="submit" [disabled]="emailForm.invalid" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Submit Form</button>
+  <!-- Preview Card -->
+  <div *ngIf="isPreviewVisible" class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+    <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">Preview Your Request Application Form</label>
+    
+    <!-- Display Form Header Information -->
+    <div class="mb-6">
+      <label class="block text-lg font-bold text-red-900 mb-4">Request&nbsp;Section</label>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+       
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Current Date:</label>
+          <p class="text-sm">{{ emailForm.get('date')?.value | date:'mediumDate' }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
+          <p class="text-sm">{{ emailForm.get('department')?.value }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
+          <p class="text-sm">{{ emailForm.get('applicantName')?.value }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
+          <p class="text-sm">{{ emailForm.get('applicantPhone')?.value }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="mb-6">
+      <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
+      <p class="text-sm">{{ emailForm.get('purpose')?.value }}</p>
+    </div>
+
+    <!-- Preview Table -->
+    <div class="overflow-x-auto mb-8">
+      <table class="min-w-full border-2 border-gray-400 text-sm">
+        <thead>
+          <tr class="bg-blue-50 text-blue-900 font-semibold">
+            <th class="border-2 border-gray-400 px-4 py-2">Classification</th>
+            <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;Email</th>
+            <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;AD</th>
+            <th class="border-2 border-gray-400 px-4 py-2">ID</th>
+            <th class="border-2 border-gray-400 px-4 py-2">Sex</th>
+            <th class="border-2 border-gray-400 px-4 py-2">First Name</th>
+            <th class="border-2 border-gray-400 px-4 py-2">Family Name</th>
+            <th class="border-2 border-gray-400 px-4 py-2">Section</th>
+            <th class="border-2 border-gray-400 px-4 py-2">Position</th>
+            <th class="border-2 border-gray-400 px-4 py-2" *ngIf="isAnyClassificationChange()">Change&nbsp;Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users.controls; let i = index" [formGroupName]="i">
+            <td class="border-2 border-gray-400 px-4 py-2">{{ user.get('classification')?.value }}</td>
+            <td class="border-2 border-gray-400 px-4 py-2 text-center">
+              {{ user.get('isEmail')?.value ? '✓' : '✗' }}
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2 text-center">
+              {{ user.get('isADUser')?.value ? '✓' : '✗' }}
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else idDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('idBeforeChange')?.value }}</div>
+                  <div>{{ user.get('idAfterChange')?.value }}</div>
+                </div>
+              </ng-container>
+              <ng-template #idDisplay>
+                {{ user.get('id')?.value }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else sexDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('sexBeforeChange')?.value === 'M' ? 'Male' : 'Female' }}</div>
+                  <div>{{ user.get('sexAfterChange')?.value === 'M' ? 'Male' : 'Female' }}</div>
+                </div>
+              </ng-container>
+              <ng-template #sexDisplay>
+                {{ user.get('sex')?.value === 'M' ? 'Male' : 'Female' }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else firstNameDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('firstNameBeforeChange')?.value }}</div>
+                  <div>{{ user.get('firstNameAfterChange')?.value }}</div>
+                </div>
+              </ng-container>
+              <ng-template #firstNameDisplay>
+                {{ user.get('firstName')?.value }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else familyNameDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('familyNameBeforeChange')?.value }}</div>
+                  <div>{{ user.get('familyNameAfterChange')?.value }}</div>
+                </div>
+              </ng-container>
+              <ng-template #familyNameDisplay>
+                {{ user.get('familyName')?.value }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else sectionDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('sectionBeforeChange')?.value }}</div>
+                  <div>{{ user.get('sectionAfterChange')?.value }}</div>
+                </div>
+              </ng-container>
+              <ng-template #sectionDisplay>
+                {{ user.get('section')?.value }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2">
+              <ng-container *ngIf="user.get('classification')?.value === 'Change'; else positionDisplay">
+                <div class="flex flex-col gap-2">
+                  <div>{{ user.get('positionBeforeChange')?.value }}</div>
+                  <div>{{ user.get('positionAfterChange')?.value }}</div>
+                </div>
+              </ng-container>
+              <ng-template #positionDisplay>
+                {{ user.get('position')?.value }}
+              </ng-template>
+            </td>
+            <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.get('classification')?.value === 'Change'">
+              <div class="flex flex-col gap-2">
+                <div>
+                  <label class="block text-xs font-semibold text-blue-900 mb-1">Before&nbsp;Change</label>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-blue-900 mb-1">After&nbsp;Change</label>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Display Prepared By and Checked By -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div>
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
+        <p class="text-sm">{{ emailForm.get('preparedBy')?.value }}</p>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
+        <p class="text-sm">{{ emailForm.get('checkedBy')?.value }}</p>
+      </div>
+    </div>
+
+    <!-- Display IT Section -->
+    <div class="mb-6">
+      <label class="block text-lg font-bold text-red-900 mb-4">IT Section</label>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
+          <p class="text-sm">{{ emailForm.get('ITpreparedBy')?.value }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
+          <p class="text-sm">{{ emailForm.get('ITcheckBy')?.value }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
+          <p class="text-sm">{{ emailForm.get('ITverifiedBy')?.value }}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Approved by</label>
+          <p class="text-sm">{{ emailForm.get('ITapprovedBy')?.value }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex gap-4 mt-4 justify-center">
+      <button type="button" (click)="backToEdit()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Back To Edit</button>
+      <button type="submit" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-900 transition-colors disabled:bg-gray-400">Submit Form</button>
+    </div>
   </div>
 
   <!-- Refer Modal -->
   <div *ngIf="isReferModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full">
-      <h2 class="text-lg font-bold text-blue-800 mb-4">Rerfer</h2>
+      <h2 class="text-lg font-bold text-blue-800 mb-4">Refer</h2>
       <form [formGroup]="referForm" class="mb-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -281,8 +458,8 @@
           </div>
         </div>
         <div class="flex gap-4 mt-4">
-          <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="searchPeople()">Search</button>
-          <button type="button" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors" (click)="resetSearch()">Reset</button>
+          <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="searchPeople()">Search</button>
+          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors" (click)="resetSearch()">Reset</button>
         </div>
       </form>
       <div *ngIf="hasSearched" class="overflow-x-auto">
@@ -292,13 +469,15 @@
               <th class="border-2 border-gray-400 px-4 py-2">ID</th>
               <th class="border-2 border-gray-400 px-4 py-2">Name</th>
               <th class="border-2 border-gray-400 px-4 py-2">Section</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Email</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let person of filteredPeople" class="hover:bg-gray-100 cursor-pointer" (click)="selectPerson(person.name)">
               <td class="border-2 border-gray-400 px-4 py-2">{{ person.id }}</td>
               <td class="border-2 border-gray-400 px-4 py-2">{{ person.name }}</td>
-              <td class="border-2 border-gray-400 px-4 py-2">{{ person.section }}</td>
+              <td class="border-2 border-gray-400 px-4 py-2">{{ person.section }}</td>  
+              <td class="border-2 border-gray-400 px-4 py-2">{{ person.email }}</td>
             </tr>
             <tr *ngIf="filteredPeople.length === 0">
               <td colspan="3" class="border-2 border-gray-400 px-4 py-2 text-center text-gray-600">No results found</td>
@@ -312,5 +491,4 @@
     </div>
   </div>
 </form>
-
 </div>

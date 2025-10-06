@@ -42,7 +42,7 @@ export class CreateDocComponent {
 
   constructor(private fb: FormBuilder, private service: Service) {
       this.emailForm = this.fb.group({
-      date: ['A'],
+      date: [''],
       department: [''],
       applicantName: [''],
       applicantPhone: [''],
@@ -86,6 +86,21 @@ export class CreateDocComponent {
   closePopup() {
     this.showEmailFormPopup = false;
   }
+
+  confirmClose(e: any) {
+    const result = confirm("Are you sure you want to close the form? Unsaved changes will be lost."); 
+    if (!result) {
+      e.cancel = true; // Prevent the popup from closing
+    }
+  }
+
+
+  onScroll(event: Event): void {
+    const scrollTop = (event.target as HTMLElement).scrollTop;
+    console.log('Scrolled to:', scrollTop);
+    
+  }
+
 
   onSubmit(): void {
     if (this.emailForm.valid) {

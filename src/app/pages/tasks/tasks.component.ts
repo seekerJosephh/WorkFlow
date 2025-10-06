@@ -1,38 +1,61 @@
-import { Component } from '@angular/core';
-import 'devextreme/data/odata/store';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
-  templateUrl: 'tasks.component.html'
+  templateUrl: './tasks.component.html',
+  standalone: true,
+  imports: [DxDataGridModule],
 })
-
-export class TasksComponent {
+export class TasksComponent implements OnInit {
+  @ViewChild(DxDataGridComponent) dataGrid!: DxDataGridComponent;
   dataSource: any;
-  priority: any[];
+  statusOptions: any[];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.dataSource = {
       store: {
-        type: 'odata',
-        key: 'Task_ID',
-        url: 'https://js.devexpress.com/Demos/DevAV/odata/Tasks'
+        type: 'array',
+        key: 'Id',
+        data: [],
+        onBeforeSend: (method: string, ajaxOptions: any) => {
+          ajaxOptions.url = 'http://localhost:3000/api/approved-docs';
+          ajaxOptions.method = 'GET';
+        },
+        load: async () => {
+          try {
+            const response = await firstValueFrom(
+              this.http.get<{ success: boolean; data: any[]; count: number }>(
+                'http://localhost:3000/api/approved-docs'
+              )
+            );
+            console.log('API Response:', response);
+            if (response && response.success) {
+              console.log('DataGrid Data:', response.data);
+              return {
+                data: response.data ?? [],
+                totalCount: response.count ?? 0,
+              };
+            }
+            throw new Error('Failed to load approved documents');
+          } catch (error) {
+            console.error('Error loading approved docs:', error);
+            throw error;
+          }
+        },
       },
-      expand: 'ResponsibleEmployee',
-      select: [
-        'Task_ID',
-        'Task_Subject',
-        'Task_Start_Date',
-        'Task_Due_Date',
-        'Task_Status',
-        'Task_Priority',
-        'Task_Completion',
-        'ResponsibleEmployee/Employee_Full_Name'
-      ]
     };
-    this.priority = [
-      { name: 'High', value: 4 },
-      { name: 'Urgent', value: 3 },
-      { name: 'Normal', value: 2 },
-      { name: 'Low', value: 1 }
+
+    this.statusOptions = [
+      { name: 'Pending', value: 'Pending' },
+      { name: 'Approved', value: 'Approved' },
+      { name: 'Rejected', value: 'Rejected' },
     ];
+  }
+
+  async ngOnInit(): Promise<void> {
+    await this.dataSource.store.load();
+    this.dataGrid.instance.refresh(); // Force DataGrid refresh
   }
 }

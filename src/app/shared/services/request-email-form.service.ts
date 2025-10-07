@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, throwError } from "rxjs";
 
 
-
 export interface UserFormData {
   classification: string;
   isEmail: boolean;
@@ -29,7 +28,6 @@ export interface UserFormData {
   beforeChange?: string;
   afterChange?: string;
 }
-
 export interface FormSubmission {
   date: string;
   department: string;
@@ -43,6 +41,7 @@ export interface FormSubmission {
   ITverifiedBy: string;
   ITapprovedBy: string;
   users: UserFormData[];
+  usersRefer: { id: string; name: string; section: string; email: string }[];
 }
 
 export interface PendingDoc {
@@ -66,6 +65,7 @@ export interface PendingDoc {
   ITApprovedStatus: string; 
   OverallStatus: string; 
   Users: UserFormData[];
+  usersRefer: { id: string; name: string; section: string; email: string } [];
 }
 
 @Injectable({

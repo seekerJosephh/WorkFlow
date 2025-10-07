@@ -4,21 +4,21 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { FormService, FormSubmission, UserFormData } from "../../services/request-email-form.service";
 
 @Component({
-    selector: 'app-request-email-form',
-    templateUrl: 'request-email-form.component.html',
-    styleUrls: ['./request-email-form.component.css'],
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule]
+  selector: 'app-request-email-form',
+  templateUrl: 'request-email-form.component.html',
+  styleUrls: ['./request-email-form.component.css'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class RequestEmailFormComponent implements OnInit {
   emailForm!: FormGroup;
-  isDisabled = true;
   referForm!: FormGroup;
   isReferModalOpen = false;
   hasSearched = false;
   isPreviewVisible = false;
   submissionStatus: 'success' | 'error' | null = null;
   submissionMessage: string = '';
+  submissionDetails: string = ''; 
   filteredPeople: { id: string; name: string; section: string; email: string }[] = [];
   private people: { id: string; name: string; section: string; email: string }[] = [
     { id: "001", name: "Chetra Pang", section: "IT", email: "chetrapang@scws.kh" },
@@ -28,27 +28,24 @@ export class RequestEmailFormComponent implements OnInit {
     { id: "005", name: "Sambath", section: "IT", email: "sambath@scws.kh" },
   ];
 
-  months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  days: number[] = Array.from({ length: 31 }, (_, i) => i + 1);
-  years: number[] = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
-
   constructor(private fb: FormBuilder, private formService: FormService) {}
 
   ngOnInit(): void {
     const today = new Date().toISOString().split('T')[0];
     this.emailForm = this.fb.group({
       date: [today, Validators.required],
-      department: ['', Validators.required],
-      applicantName: ['', Validators.required],
-      applicantPhone: ['', Validators.required],
+      department: ['', [Validators.required, Validators.maxLength(50)]],
+      applicantName: ['', [Validators.required, Validators.maxLength(50)]],
+      applicantPhone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       users: this.fb.array([this.createUserRow()]),
-      preparedBy: ['', Validators.required],
-      checkedBy: ['', Validators.required],
-      ITpreparedBy: ['Mr.A', Validators.required],
-      ITcheckBy: ['Mr.B', Validators.required],
-      ITverifiedBy: ['Mr.C', Validators.required],
-      ITapprovedBy: ['Mr.D', Validators.required],
-      purpose: ['', Validators.required]
+      preparedBy: ['', [Validators.required, Validators.maxLength(50)]],
+      checkedBy: ['', [Validators.required, Validators.maxLength(50)]],
+      ITpreparedBy: ['Mr.A', [Validators.required, Validators.maxLength(50)]],
+      ITcheckedBy: ['Mr.B', [Validators.required, Validators.maxLength(50)]],
+      ITverifiedBy: ['Mr.C', [Validators.required, Validators.maxLength(50)]],
+      ITapprovedBy: ['Mr.D', [Validators.required, Validators.maxLength(50)]],
+      purpose: ['', [Validators.required, Validators.maxLength(200)]],
+      usersRefer: [[]]
     });
     this.referForm = this.fb.group({
       searchId: [''],
@@ -90,18 +87,48 @@ export class RequestEmailFormComponent implements OnInit {
     });
 
     userGroup.get('classification')?.valueChanges.subscribe(value => {
-      const beforeChangeControl = userGroup.get('beforeChange');
-      const afterChangeControl = userGroup.get('afterChange');
+      const fields = [
+        'idBeforeChange', 'idAfterChange',
+        'sexBeforeChange', 'sexAfterChange',
+        'firstNameBeforeChange', 'firstNameAfterChange',
+        'familyNameBeforeChange', 'familyNameAfterChange',
+        'sectionBeforeChange', 'sectionAfterChange',
+        'positionBeforeChange', 'positionAfterChange',
+        'beforeChange', 'afterChange'
+      ];
 
-      if (value === 'Change') {
-        beforeChangeControl?.setValidators([Validators.required]);
-        afterChangeControl?.setValidators([Validators.required]);
+      fields.forEach(field => {
+        const control = userGroup.get(field);
+        if (value === 'Change') {
+          control?.setValidators([Validators.required]);
+        } else {
+          control?.clearValidators();
+        }
+        control?.updateValueAndValidity();
+      });
+
+      if (value !== 'Change') {
+        fields.forEach(field => userGroup.get(field)?.setValue(''));
+        userGroup.get('id')?.setValidators([Validators.required]);
+        userGroup.get('sex')?.setValidators([Validators.required]);
+        userGroup.get('firstName')?.setValidators([Validators.required]);
+        userGroup.get('familyName')?.setValidators([Validators.required]);
+        userGroup.get('section')?.setValidators([Validators.required]);
+        userGroup.get('position')?.setValidators([Validators.required]);
       } else {
-        beforeChangeControl?.clearValidators();
-        afterChangeControl?.clearValidators();
+        userGroup.get('id')?.clearValidators();
+        userGroup.get('sex')?.clearValidators();
+        userGroup.get('firstName')?.clearValidators();
+        userGroup.get('familyName')?.clearValidators();
+        userGroup.get('section')?.clearValidators();
+        userGroup.get('position')?.clearValidators();
       }
-      beforeChangeControl?.updateValueAndValidity();
-      afterChangeControl?.updateValueAndValidity();
+      userGroup.get('id')?.updateValueAndValidity();
+      userGroup.get('sex')?.updateValueAndValidity();
+      userGroup.get('firstName')?.updateValueAndValidity();
+      userGroup.get('familyName')?.updateValueAndValidity();
+      userGroup.get('section')?.updateValueAndValidity();
+      userGroup.get('position')?.updateValueAndValidity();
     });
 
     return userGroup;
@@ -148,8 +175,9 @@ export class RequestEmailFormComponent implements OnInit {
     this.hasSearched = false;
   }
 
-  selectPerson(name: string) {
-    this.emailForm.get('checkedBy')?.setValue(name);
+  selectPerson(person: { id: string; name: string; section: string; email: string }) {
+    this.emailForm.get('checkedBy')?.setValue(person.name);
+    this.emailForm.get('usersRefer')?.setValue([person]);
     this.closeReferModal();
   }
 
@@ -160,37 +188,67 @@ export class RequestEmailFormComponent implements OnInit {
   saveDocument(): void {
     if (this.emailForm) {
       this.isPreviewVisible = true;
-    } else {
-      console.log('Form is not valid');
-    }
+      this.submissionStatus = null;
+      this.submissionMessage = '';
+      this.submissionDetails = '';
+    } 
+    // else {
+    //   this.submissionStatus = 'error';
+    //   this.submissionMessage = 'Please fill out all required fields correctly.';
+    //   this.submissionDetails = '';
+    //   console.log('Form Errors:', this.emailForm.errors);
+    //   console.log('Users Errors:', this.users.controls.map(control => control.errors));
+    // }
   }
 
   backToEdit(): void {
     this.isPreviewVisible = false;
+    this.submissionStatus = null;
+    this.submissionMessage = '';
+    this.submissionDetails = '';
   }
 
   onSubmit() {
-      if (this.emailForm) {
-          const formData: FormSubmission = this.emailForm.value;
-          formData.ITcheckedBy = this.emailForm.get('ITcheckBy')?.value;
-          console.log('Form Data:', JSON.stringify(formData, null, 2)); 
-          this.formService.submitForm(formData).subscribe({
-              next: (response) => {
-                  this.submissionStatus = 'success';
-                  this.submissionMessage = response.message || 'Form submitted successfully';
-                  this.users.push(this.createUserRow());
-                  this.isPreviewVisible = false;
-              },
-              error: (error) => {
-                  this.submissionStatus = 'error';
-                  this.submissionMessage = error.message || 'Failed to submit form';
-                  console.error('Submission error:', error);
-              }
+    if (this.emailForm) {
+      const formData: FormSubmission = this.emailForm.value;
+      console.log('Form Data:', JSON.stringify(formData, null, 2));
+      this.formService.submitForm(formData).subscribe({
+        next: (response) => {
+          this.submissionStatus = 'success';
+          this.submissionMessage = response.message || 'Form submitted successfully';
+          this.submissionDetails = '';
+          // Reset form to initial state
+          this.emailForm.reset({
+            date: new Date().toISOString().split('T')[0],
+            department: '',
+            applicantName: '',
+            applicantPhone: '',
+            purpose: '',
+            preparedBy: '',
+            checkedBy: '',
+            ITpreparedBy: 'Mr.A',
+            ITcheckedBy: 'Mr.B',
+            ITverifiedBy: 'Mr.C',
+            ITapprovedBy: 'Mr.D',
+            users: [this.createUserRow().value],
+            usersRefer: []
           });
-      } else {
+          this.isPreviewVisible = false;
+        },
+        error: (error) => {
           this.submissionStatus = 'error';
-          this.submissionMessage = 'Please fill out all required fields correctly.';
-          console.log('Users Errors:', this.users.controls.map(control => control.errors));
-      }
+          this.submissionMessage = error.error?.message || 'Failed to submit form';
+          this.submissionDetails = error.error?.details || 'No additional details available';
+          console.error('Submission error:', error);
+        }
+      });
+    } 
+    // else {
+    //   this.submissionStatus = 'error';
+    //   this.submissionMessage = 'Please fill out all required fields correctly.';
+    //   this.submissionDetails = '';
+    //   console.log('Form Errors:', this.emailForm.errors);
+    //   console.log('Users Errors:', this.users.controls.map(control => control.errors));
+    // }
   }
 }

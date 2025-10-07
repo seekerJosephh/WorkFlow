@@ -23,7 +23,7 @@
             <input id="date" type="date" formControlName="date" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Section:</label>
             <input type="text" formControlName="department" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
@@ -52,7 +52,7 @@
               <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;Email</th>
               <th class="border-2 border-gray-400 px-4 py-2">User&nbsp;AD</th>
               <th class="border-2 border-gray-400 px-4 py-2">ID</th>
-              <th class="border-2 border-gray-400 px-4 py-2">Sex</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Gender</th>
               <th class="border-2 border-gray-400 px-4 py-2">First Name</th>
               <th class="border-2 border-gray-400 px-4 py-2">Family Name</th>
               <th class="border-2 border-gray-400 px-4 py-2">Section</th>
@@ -80,7 +80,9 @@
                   <div>
                     <input formControlName="idBeforeChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   </div>
-                 
+                  <div>
+                    <input formControlName="idAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  </div>
                 </div>
                 <ng-template #idInput>
                   <input formControlName="id" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -412,7 +414,7 @@
         </div>
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-          <p class="text-sm">{{ emailForm.get('ITcheckBy')?.value }}</p>
+          <p class="text-sm">{{ emailForm.get('ITcheckedBy')?.value }}</p> <!-- Fixed from ITcheckBy -->
         </div>
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
@@ -473,14 +475,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let person of filteredPeople" class="hover:bg-gray-100 cursor-pointer" (click)="selectPerson(person.name)">
+            <tr *ngFor="let person of filteredPeople" class="hover:bg-gray-100 cursor-pointer" (click)="selectPerson(person)" [attr.data-person]="person | json">
               <td class="border-2 border-gray-400 px-4 py-2">{{ person.id }}</td>
               <td class="border-2 border-gray-400 px-4 py-2">{{ person.name }}</td>
-              <td class="border-2 border-gray-400 px-4 py-2">{{ person.section }}</td>  
+              <td class="border-2 border-gray-400 px-4 py-2">{{ person.section }}</td>
               <td class="border-2 border-gray-400 px-4 py-2">{{ person.email }}</td>
             </tr>
             <tr *ngIf="filteredPeople.length === 0">
-              <td colspan="3" class="border-2 border-gray-400 px-4 py-2 text-center text-gray-600">No results found</td>
+              <td colspan="4" class="border-2 border-gray-400 px-4 py-2 text-center text-gray-600">No results found</td>
             </tr>
           </tbody>
         </table>

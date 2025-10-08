@@ -28,7 +28,7 @@
           <th class="border-2 border-gray-400 px-4 py-2 text-left">Applicant</th>
           <th class="border-2 border-gray-400 px-4 py-2 text-left">Section</th>
           <th class="border-2 border-gray-400 px-4 py-2 text-left">Purpose</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">Request Status</th>
+          <th class="border-2 border-gray-400 px-4 py-2 text-center">Approved</th>
           <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Prepared</th>
           <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Checked</th>
           <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Verified</th>
@@ -39,7 +39,7 @@
       <tbody>
         <tr *ngFor="let doc of pendingDocs" class="hover:bg-gray-50">
           <td class="border-2 border-gray-400 px-4 py-2">{{ doc.Id }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.FormDate | date:'yyyy-MM-dd' }}</td>
+          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.CreatedAt | date:'yyyy-MM-dd' }}</td>
           <td class="border-2 border-gray-400 px-4 py-2">{{ doc.ApplicantName }}</td>
           <td class="border-2 border-gray-400 px-4 py-2">{{ doc.Department }}</td>
           <td class="border-2 border-gray-400 px-4 py-2 truncate max-w-xs" title="{{ doc.Purpose }}">{{ doc.Purpose }}</td>
@@ -77,7 +77,7 @@
           </td>
         </tr>
         <tr *ngIf="pendingDocs.length === 0">
-          <td colspan="12" class="border-2 border-gray-400 px-4 py-8 text-center text-gray-500">
+          <td colspan="11" class="border-2 border-gray-400 px-4 py-8 text-center text-gray-500">
             No pending documents found.
           </td>
         </tr>
@@ -107,7 +107,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Created At:</label>
-            <p class="text-sm">{{ selectedDoc.FormDate | date:'yyyy-MM-dd' }}</p>
+            <p class="text-sm">{{ selectedDoc.CreatedAt | date:'yyyy-MM-dd' }}</p>
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
@@ -162,7 +162,7 @@
                   </div>
                 </ng-container>
                 <ng-template #idDisplay>
-                  {{ user.id }}
+                  {{ user.id || 'N/A' }}
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
@@ -184,7 +184,7 @@
                   </div>
                 </ng-container>
                 <ng-template #firstNameDisplay>
-                  {{ user.firstName }}
+                  {{ user.firstName || 'N/A' }}
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
@@ -195,7 +195,7 @@
                   </div>
                 </ng-container>
                 <ng-template #familyNameDisplay>
-                  {{ user.familyName }}
+                  {{ user.familyName || 'N/A' }}
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
@@ -206,7 +206,7 @@
                   </div>
                 </ng-container>
                 <ng-template #sectionDisplay>
-                  {{ user.section }}
+                  {{ user.section || 'N/A' }}
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
@@ -217,7 +217,7 @@
                   </div>
                 </ng-container>
                 <ng-template #positionDisplay>
-                  {{ user.position }}
+                  {{ user.position || 'N/A' }}
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.classification === 'Change'">
@@ -239,11 +239,11 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-          <p class="text-sm">{{ selectedDoc.PreparedBy }}</p>
+          <p class="text-sm">{{ selectedDoc.PreparedBy || 'N/A' }}</p>
         </div>
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-          <p class="text-sm">{{ selectedDoc.CheckedBy }}</p>
+          <p class="text-sm">{{ selectedDoc.CheckedBy || 'N/A' }}</p>
         </div>
       </div>
 
@@ -253,19 +253,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-            <p class="text-sm">{{ selectedDoc.ITPreparedBy }}</p>
+            <p class="text-sm">{{ selectedDoc.ITPreparedBy || 'N/A' }}</p>
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-            <p class="text-sm">{{ selectedDoc.ITCheckedBy }}</p>
+            <p class="text-sm">{{ selectedDoc.ITCheckedBy || 'N/A' }}</p>
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
-            <p class="text-sm">{{ selectedDoc.ITVerifiedBy }}</p>
+            <p class="text-sm">{{ selectedDoc.ITVerifiedBy || 'N/A' }}</p>
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Approved by</label>
-            <p class="text-sm">{{ selectedDoc.ITApprovedBy }}</p>
+            <p class="text-sm">{{ selectedDoc.ITApprovedBy || 'N/A' }}</p>
           </div>
         </div>
       </div>
@@ -274,12 +274,12 @@
       <div class="mb-6">
         <label class="block text-lg font-bold text-red-900 mb-4">Statuses</label>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <p><strong>Request Status:</strong> <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus }}</span></p>
-          <p><strong>IT Prepared:</strong> <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus }}</span></p>
-          <p><strong>IT Checked:</strong> <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus }}</span></p>
-          <p><strong>IT Verified:</strong> <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus }}</span></p>
-          <p><strong>IT Approved:</strong> <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus }}</span></p>
-          <p><strong>Overall:</strong> <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus }}</span></p>
+          <p><strong>Request Status:</strong> <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus || 'Pending' }}</span></p>
+          <p><strong>IT Prepared:</strong> <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus || 'Pending' }}</span></p>
+          <p><strong>IT Checked:</strong> <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus || 'Pending' }}</span></p>
+          <p><strong>IT Verified:</strong> <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus || 'Pending' }}</span></p>
+          <p><strong>IT Approved:</strong> <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus || 'Pending' }}</span></p>
+          <p><strong>Overall:</strong> <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus || 'Pending' }}</span></p>
         </div>
       </div>
 

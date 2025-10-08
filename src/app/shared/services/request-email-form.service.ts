@@ -28,6 +28,7 @@ export interface UserFormData {
   beforeChange?: string;
   afterChange?: string;
 }
+
 export interface FormSubmission {
   date: string;
   department: string;
@@ -77,11 +78,11 @@ export class FormService {
     constructor(private http: HttpClient) {}
 
     // Submit form data to server
-    submitForm(formData: FormSubmission): Observable<any> {
-        return this.http.post(`${this.apiUrl}/submit-form`, formData).pipe(
-            catchError(this.handleError)
-        );
-    }
+  submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
+    return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
+      catchError(this.handleError)
+    );
+  }
     // Fetch pending documents
     getPendingDocs(): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
         return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(`${this.apiUrl}/pending-docs`).pipe(
@@ -104,15 +105,14 @@ export class FormService {
     }
 
 
-    private handleError(error: HttpErrorResponse ) {
-        let errorMessage = 'Unknow error Occurred'
-            if (error.error instanceof ErrorEvent) {
-                errorMessage = `Client Error: ${error.error.message}`;
-            } else {
-                errorMessage = `Server Error: ${error.status}\n Message: ${error.error.message}`
-            }
-        console.error(errorMessage);
-        return throwError(() => new Error(errorMessage));
-
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Unknown error occurred';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Client Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Server Error: ${error.status}\nMessage: ${error.error.message || 'No message provided'}`;
     }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
 }

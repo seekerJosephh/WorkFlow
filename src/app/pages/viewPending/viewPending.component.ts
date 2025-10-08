@@ -31,7 +31,18 @@ export class ViewPendingComponent implements OnInit {
     this.formService.getPendingDocs().subscribe({
       next: (response) => {
         if (response && response.success) {
-          this.pendingDocs = response.data;
+          // Ensure all statuses have a default value of 'Pending'
+          this.pendingDocs = response.data.map(doc => ({
+            ...doc,
+            RequestCheckedStatus: doc.RequestCheckedStatus || 'Pending',
+            ITPreparedStatus: doc.ITPreparedStatus || 'Pending',
+            ITCheckedStatus: doc.ITCheckedStatus || 'Pending',
+            ITVerifiedStatus: doc.ITVerifiedStatus || 'Pending',
+            ITApprovedStatus: doc.ITApprovedStatus || 'Pending',
+            OverallStatus: doc.OverallStatus || 'Pending',
+            Users: doc.Users || [],
+            usersRefer: doc.usersRefer || []
+          }));
           this.totalCount = response.count;
         } else {
           this.pendingDocs = [];
@@ -68,7 +79,7 @@ export class ViewPendingComponent implements OnInit {
   }
 
   getStatusColor(status: string): string {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'pending': return 'bg-yellow-200 text-yellow-800';
       case 'approved': return 'bg-green-200 text-green-800';
       case 'rejected': return 'bg-red-200 text-red-800';

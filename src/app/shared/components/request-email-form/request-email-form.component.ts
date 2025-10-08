@@ -192,13 +192,7 @@ export class RequestEmailFormComponent implements OnInit {
       this.submissionMessage = '';
       this.submissionDetails = '';
     } 
-    // else {
-    //   this.submissionStatus = 'error';
-    //   this.submissionMessage = 'Please fill out all required fields correctly.';
-    //   this.submissionDetails = '';
-    //   console.log('Form Errors:', this.emailForm.errors);
-    //   console.log('Users Errors:', this.users.controls.map(control => control.errors));
-    // }
+
   }
 
   backToEdit(): void {
@@ -216,8 +210,7 @@ export class RequestEmailFormComponent implements OnInit {
         next: (response) => {
           this.submissionStatus = 'success';
           this.submissionMessage = response.message || 'Form submitted successfully';
-          this.submissionDetails = '';
-          // Reset form to initial state
+          this.submissionDetails = `Request ID: ${response.data.id}, Created At: ${response.data.createdAt}`;
           this.emailForm.reset({
             date: new Date().toISOString().split('T')[0],
             department: '',
@@ -233,22 +226,24 @@ export class RequestEmailFormComponent implements OnInit {
             users: [this.createUserRow().value],
             usersRefer: []
           });
+          this.users.clear();
+          this.users.push(this.createUserRow());
           this.isPreviewVisible = false;
         },
-        error: (error) => {
-          this.submissionStatus = 'error';
-          this.submissionMessage = error.error?.message || 'Failed to submit form';
-          this.submissionDetails = error.error?.details || 'No additional details available';
-          console.error('Submission error:', error);
-        }
+        // error: (error) => {
+        //   this.submissionStatus = 'error';
+        //   this.submissionMessage = error.error?.message || 'Failed to submit form';
+        //   this.submissionDetails = error.error?.details || 'No additional details available';
+        //   console.error('Submission error:', error);
+        // }
       });
     } 
     // else {
     //   this.submissionStatus = 'error';
-    //   this.submissionMessage = 'Please fill out all required fields correctly.';
-    //   this.submissionDetails = '';
-    //   console.log('Form Errors:', this.emailForm.errors);
-    //   console.log('Users Errors:', this.users.controls.map(control => control.errors));
+    //   this.submissionMessage = 'Form is invalid';
+    //   this.submissionDetails = 'Please fill out all required field correctly';
+
     // }
+
   }
 }

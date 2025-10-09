@@ -21,3 +21,25 @@
 .container * {
     font-family: inherit !important;
 }
+
+
+:host ::ng-deep .dx-datagrid-headers .dx-header-row {
+  background-color: #E6F0FA;
+  color: #1E3A8A;
+  font-weight: 600;
+}
+:host ::ng-deep .dx-datagrid-headers .dx-datagrid-table .dx-header-row > td {
+  border: 2px solid #D1D5DB;
+  padding: 8px 16px;
+}
+:host ::ng-deep .dx-datagrid-rowsview .dx-data-row td {
+  border: 2px solid #D1D5DB;
+  padding: 8px 16px;
+}
+:host ::ng-deep .dx-datagrid-rowsview .dx-row:hover {
+  background-color: #F3F4F6;
+  cursor: pointer;
+}
+:host ::ng-deep .dx-datagrid .dx-datagrid-content {
+  font-size: 0.875rem;
+}

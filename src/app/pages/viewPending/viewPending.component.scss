@@ -1,34 +1,60 @@
-.logos-container {
-  margin: 20px 0 40px 0;
-  text-align: center;
-  svg {
-    display: inline-block;
-  }
+.dx-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
 }
 
-.devextreme-logo {
-  width: 200px;
-  height: 34px;
-  margin-bottom: 13px;
+.wide-card {
+  width: 100%;
 }
 
-.angular-logo {
-  width: 220px;
-  height: 62px;
-}
-
-.plus {
-  margin: 15px 10px;
-  width: 22px;
-  height: 22px;
-}
-
-:host-context(.screen-x-small) .logos-container {
-  svg {
-    width: 100%;
-    display: block;
-    &.plus {
-      margin: 0;
+/* Ensure buttons match the original style */
+:host ::ng-deep .dx-button {
+  &.bg-blue-600 {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 12px;
+    &:hover {
+      background-color: #1d4ed8 !important;
     }
   }
+}
+
+/* Style for the refresh button */
+:host ::ng-deep .dx-button-default {
+  background-color: #16a34a !important;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 8px 24px;
+  &:hover {
+    background-color: #15803d !important;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  max-width: 64rem;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
 }

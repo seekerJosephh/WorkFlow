@@ -16,23 +16,37 @@ const fileItems: FileItem[] = [{
     isDirectory: true,
     items: [
       {
-        name: 'Request Create new Email Account',
+        name: 'QF-IFM-016 Application for Create and Delet E-mail',
         isDirectory: false,
          
-      },
-      {
-        name: 'Passwords.rtf',
-        isDirectory: false,
       },
     ],
   }, {
     name: 'Infrasturcture',
     isDirectory: true,
-    size: 1024,
+    items: [
+      {
+        name: 'QF-IFM-007 & QF-IFM-055 IP Address Application Form',
+        isDirectory: false,
+      }
+    ]
   }, {
     name: 'Security',
     isDirectory: true,
-    size: 2048,
+    items: [
+     {
+       name: 'QF-IFM-038 Form Report Security Incident',
+      isDirectory: false,
+     },
+     {
+      name: 'QF-IFM-019 Request for Checking Security Camera Form',
+      isDirectory: false,
+     },
+     {
+      name: 'QF-IFM-020 Adjust Location Camera Security Form',
+      isDirectory: false,
+     }
+    ],
   }, {
     name: 'Various IT related applications',
     isDirectory: true,

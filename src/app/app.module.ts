@@ -2,24 +2,22 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { SideNavOuterToolbarModule, SideNavInnerToolbarModule, SingleCardModule } from './layouts';
-import { FooterModule, ResetPasswordFormModule, CreateAccountFormModule, ChangePasswordFormModule, LoginFormModule } from './shared/components';
+import { FooterModule, ResetPasswordFormModule, CreateAccountFormModule, ChangePasswordFormModule, LoginFormModule, RequestEmailFormComponent } from './shared/components';
 import { AuthService, ScreenService, AppInfoService } from './shared/services';
 import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
 import { ThemeService } from './shared/services/theme.service';
-import { DxFileManagerModule, DxPopoverModule, DxPopupModule } from 'devextreme-angular';
+import { DxButtonModule, DxDataGridModule, DxFileManagerModule, DxPopoverModule, DxPopupModule } from 'devextreme-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './pages/home/home.component';
-// import { ProfileComponent } from './pages/profile/profile.component';
+import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent
     
-    HomeComponent,
-    // ProfileComponent,
-
   ],
   imports: [
     BrowserModule,
@@ -36,11 +34,15 @@ import { HomeComponent } from './pages/home/home.component';
     DxFileManagerModule,
     DxPopoverModule,
     DxPopupModule,
+    DxDataGridModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    DxButtonModule,
+    ViewPendingComponent,
+    RequestEmailFormComponent
   ],
   providers: [AuthService, ScreenService, AppInfoService, ThemeService],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent] 
 })
 export class AppModule {}

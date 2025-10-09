@@ -4,6 +4,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import { ViewPendingComponent } from './app/pages/viewPending/viewPending.component';
 
 if (environment.production) {
   enableProdMode();
@@ -15,5 +16,5 @@ themes.initialized(() => {
 });
 
 platformBrowserDynamic()
-  .bootstrapModule(AppModule)
+  .bootstrapModule(ViewPendingComponent)
   .catch((err) => console.error(err));

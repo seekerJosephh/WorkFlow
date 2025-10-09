@@ -24,7 +24,8 @@
 >
   <div class="popup-scroll-container" (scroll)="onScroll($event)">
     <ng-container [ngSwitch]="selectedFile?.name">
-      <app-request-email-form *ngSwitchCase="'Request Create new Email Account'"></app-request-email-form>
+      <app-request-email-form *ngSwitchCase="'QF-IFM-016 Application for Create and Delet E-mail'"></app-request-email-form>
+      <!-- Add more selector file-->
       <div *ngSwitchDefault>Select a file to view details</div>
     </ng-container>
   </div>

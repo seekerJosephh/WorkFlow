@@ -8,13 +8,13 @@
 .container * {
     font-family: inherit !important;
 }
-@font-face {
-    font-family: "Aptos Narrow";
-    src: url("/themes/fonts/Aptos-Narrow.woff2") format("woff2"),
-        url("/themes/fonts/Aptos-Narrow.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
+// @font-face {
+//     font-family: "Aptos Narrow";
+//     src: url("/themes/fonts/Aptos-Narrow.woff2") format("woff2"),
+//         url("/themes/fonts/Aptos-Narrow.ttf") format("truetype");
+//     font-weight: normal;
+//     font-style: normal;
+// }
 
 .container {
     font-family: "Aptos Narrow", sans-serif !important;

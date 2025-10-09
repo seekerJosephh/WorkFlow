@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from "rxjs";
+import { catchError, Observable, throwError, map } from "rxjs";
 
 
 export interface UserFormData {
@@ -31,7 +31,7 @@ export interface UserFormData {
 
 export interface FormSubmission {
   date: string;
-  department: string;
+  department: any;
   applicantName: string;
   applicantPhone: string;
   purpose: string;
@@ -69,6 +69,20 @@ export interface PendingDoc {
   usersRefer: { id: string; name: string; section: string; email: string } [];
 }
 
+export interface Section {
+  sectid: number;
+  SectionCode: string;
+}
+
+export interface Employee {
+  empId: number;
+  employeeCode: string;
+  englishName: string;
+  sectionName: string;
+  position?: string;
+  email: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -78,11 +92,28 @@ export class FormService {
     constructor(private http: HttpClient) {}
 
     // Submit form data to server
-  submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
-    return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
-      catchError(this.handleError)
-    );
-  }
+    submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
+      return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
+        catchError(this.handleError)
+      );
+    }
+
+    // Fetch section service
+    getSections(): Observable<Section[]> {
+      return this.http.get<{ success: boolean; data: Section[] }>(`${this.apiUrl}/sections`).pipe(
+        map(response => response.data),
+        catchError(this.handleError)
+      );
+    }
+
+    // Fetch Employee
+    getEmployees(): Observable<Employee[]> {
+      return this.http.get<{ success: boolean; data: Employee[] } >(`${this.apiUrl}/employees`).pipe(
+        map(response => response.data),
+        catchError(this.handleError)
+      )
+    }
+
     // Fetch pending documents
     getPendingDocs(): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
         return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(`${this.apiUrl}/pending-docs`).pipe(
@@ -91,10 +122,8 @@ export class FormService {
     }
 
     // Fetch single form by ID
-    getFormById(id: number): Observable<{ success: boolean; data: any }> {
-        return this.http.get<{ success: boolean; data: any }>(`${this.apiUrl}/forms/${id}`).pipe(
-        catchError(this.handleError)
-        );
+    getEmployeeById(employeeCode: string): Observable<Employee> {
+      return this.http.get<Employee>(`${this.apiUrl}/employee/${employeeCode}`);
     }
 
     // Update approval status 

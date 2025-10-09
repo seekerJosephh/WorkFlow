@@ -1,6 +1,6 @@
-<div class="container mx-auto p-6 max-w-screen">
+<!-- <div class="container mx-auto p-6 max-w-screen"> -->
   <h2 class="text-2xl font-bold text-center text-blue-900 mb-6">Pending Documents</h2>
-  
+
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="text-center py-8">
     <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -18,83 +18,125 @@
     <p class="text-sm text-gray-600">Total Pending Requests: <span class="font-semibold text-blue-900">{{ totalCount }}</span></p>
   </div>
 
-  <!-- Table -->
-  <div *ngIf="!loading && !error" class="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
-    <table class="min-w-full text-sm">
-      <thead>
-        <tr class="bg-blue-50 text-blue-900 font-semibold">
-          <th class="border-2 border-gray-400 px-4 py-2 text-left">ID</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-left">Created At</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-left">Applicant</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-left">Section</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-left">Purpose</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">Approved</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Prepared</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Checked</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Verified</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">IT Approved</th>
-          <th class="border-2 border-gray-400 px-4 py-2 text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let doc of pendingDocs" class="hover:bg-gray-50">
-          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.Id }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.CreatedAt | date:'yyyy-MM-dd' }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.ApplicantName }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2">{{ doc.Department }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2 truncate max-w-xs" title="{{ doc.Purpose }}">{{ doc.Purpose }}</td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ getStatusColor(doc.RequestCheckedStatus) }}">
-              {{ doc.RequestCheckedStatus }}
-            </span>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ getStatusColor(doc.ITPreparedStatus) }}">
-              {{ doc.ITPreparedStatus }}
-            </span>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ getStatusColor(doc.ITCheckedStatus) }}">
-              {{ doc.ITCheckedStatus }}
-            </span>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ getStatusColor(doc.ITVerifiedStatus) }}">
-              {{ doc.ITVerifiedStatus }}
-            </span>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ getStatusColor(doc.ITApprovedStatus) }}">
-              {{ doc.ITApprovedStatus }}
-            </span>
-          </td>
-          <td class="border-2 border-gray-400 px-4 py-2 text-center">
-            <button 
-              (click)="openPreview(doc)" 
-              class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors">
-              View
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="pendingDocs.length === 0">
-          <td colspan="11" class="border-2 border-gray-400 px-4 py-8 text-center text-gray-500">
-            No pending documents found.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Data Grid -->
+  <div *ngIf="!loading && !error" class="dx-card wide-card">
+    <dx-data-grid
+      [dataSource]="pendingDocs"
+      [showBorders]="true"
+      [focusedRowEnabled]="true"
+      [focusedRowIndex]="0"
+      [columnAutoWidth]="true"
+      [columnHidingEnabled]="false"
+      (onRowClick)="onRowClick($event)">
+
+      <dxo-paging [pageSize]="10"></dxo-paging>
+      <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+      <dxi-column
+        dataField="Id"
+        [width]="90"
+        caption="Form ID"
+        [hidingPriority]="2">
+      </dxi-column>
+      <dxi-column
+        dataField="CreatedAt"
+        caption="Created Date"
+        dataType="date"
+        format="yyyy-MM-dd"
+        [hidingPriority]="3">
+      </dxi-column>
+      <dxi-column
+        dataField="ApplicantName"
+        caption="Applicant"
+        [allowSorting]="false"
+        [hidingPriority]="7">
+      </dxi-column>
+      <dxi-column
+        dataField="Department"
+        caption="Section"
+        [hidingPriority]="1">
+      </dxi-column>
+      <dxi-column
+        dataField="Purpose"
+        [width]="190"
+        caption="Purpose"
+        [hidingPriority]="8">
+      </dxi-column>
+      <dxi-column
+        dataField="RequestCheckedStatus"
+        caption="Approved"
+        [hidingPriority]="5">
+        <dxo-lookup
+          [dataSource]="statusOptions"
+          valueExpr="value"
+          displayExpr="name">
+        </dxo-lookup>
+      </dxi-column>
+      <dxi-column
+        dataField="ITPreparedStatus"
+        caption="IT Prepared"
+        [hidingPriority]="4">
+        <dxo-lookup
+          [dataSource]="statusOptions"
+          valueExpr="value"
+          displayExpr="name">
+        </dxo-lookup>
+      </dxi-column>
+      <dxi-column
+        dataField="ITCheckedStatus"
+        caption="IT Checked"
+        [hidingPriority]="3">
+        <dxo-lookup
+          [dataSource]="statusOptions"
+          valueExpr="value"
+          displayExpr="name">
+        </dxo-lookup>
+      </dxi-column>
+      <dxi-column
+        dataField="ITVerifiedStatus"
+        caption="IT Verified"
+        [hidingPriority]="2">
+        <dxo-lookup
+          [dataSource]="statusOptions"
+          valueExpr="value"
+          displayExpr="name">
+        </dxo-lookup>
+      </dxi-column>
+      <dxi-column
+        dataField="ITApprovedStatus"
+        caption="IT Approved"
+        [hidingPriority]="1">
+        <dxo-lookup
+          [dataSource]="statusOptions"
+          valueExpr="value"
+          displayExpr="name">
+        </dxo-lookup>
+      </dxi-column>
+      <!-- <dxi-column
+        caption="Actions"
+        type="buttons"
+        [hidingPriority]="0">
+        <dxi-button
+          text="View"
+          cssClass="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
+          (onClick)="openPreview($event)">
+        </dxi-button>
+      </dxi-column> -->
+    </dx-data-grid>
   </div>
 
   <!-- Refresh Button -->
   <div *ngIf="!loading && !error" class="mt-4 text-center">
-    <button 
-      (click)="refresh()" 
-      class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-      Refresh
-    </button>
+    <dx-button
+      text="Refresh"
+      type="default"
+      stylingMode="contained"
+      (onClick)="refresh()">
+    </dx-button>
   </div>
 
-  <!-- Preview Modal -->
+  <!-- Preview Modal (Unchanged) -->
   <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
       <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">
@@ -285,12 +327,13 @@
 
       <!-- Close Button -->
       <div class="text-center">
-        <button 
-          (click)="closePreview()" 
-          class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-          Close
-        </button>
+        <dx-button
+          text="Close"
+          type="default"
+          stylingMode="contained"
+          (onClick)="closePreview()">
+        </dx-button>
       </div>
     </div>
   </div>
-</div>
+<!-- </div> -->

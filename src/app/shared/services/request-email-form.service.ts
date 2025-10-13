@@ -31,42 +31,47 @@ export interface UserFormData {
 
 export interface FormSubmission {
   date: string;
-  department: any;
+  department: any; // Changed to string to match VARCHAR(50)
   applicantName: string;
   applicantPhone: string;
   purpose: string;
   preparedBy: string;
   checkedBy: string;
-  ITpreparedBy: string;
-  ITcheckedBy: string;
-  ITverifiedBy: string;
-  ITapprovedBy: string;
   users: UserFormData[];
   usersRefer: { id: string; name: string; section: string; email: string }[];
+  ITApprovers: { englishName: string; email: string }[];
 }
+
 
 export interface PendingDoc {
   Id: number;
-  CreatedAt: string; 
-  FormDate: string;
+  CreatedAt: string | Date;
   Department: string;
   ApplicantName: string;
   ApplicantPhone: string;
   Purpose: string;
   PreparedBy: string;
-  CheckedBy: string;
-  ITPreparedBy: string;
-  ITCheckedBy: string;
-  ITVerifiedBy: string;
-  ITApprovedBy: string;
-  RequestCheckedStatus: string; 
-  ITPreparedStatus: string; 
-  ITCheckedStatus: string; 
-  ITVerifiedStatus: string; 
-  ITApprovedStatus: string; 
-  OverallStatus: string; 
-  Users: UserFormData[];
-  usersRefer: { id: string; name: string; section: string; email: string } [];
+  CheckedBy: string | null;
+  ITPreparedBy: string | null;
+  ITCheckedBy: string | null;
+  ITVerifiedBy: string | null;
+  ITApprovedBy: string | null;
+  RequestCheckedStatus: string;
+  ITPreparedStatus: string;
+  ITCheckedStatus: string;
+  ITVerifiedStatus: string;
+  ITApprovedStatus: string;
+  OverallStatus: string;
+  Info: string;
+  RequestCheckedDate: string | Date | null;
+  ITPreparedDate: string | Date | null;
+  ITCheckedDate: string | Date | null;
+  ITVerifiedDate: string | Date | null;
+  ITApprovedDate: string | Date | null;
+  OverallBy: string | null;
+  OverallDate: string | Date | null;
+  Users?: any[]; 
+  usersRefer?: any[]; 
 }
 
 export interface Section {
@@ -82,6 +87,8 @@ export interface Employee {
   position?: string;
   email: string;
 }
+
+
 
 @Injectable({
     providedIn: 'root'
@@ -120,6 +127,14 @@ export class FormService {
         catchError(this.handleError)
         );
     }
+    // Fetch history documents (Approved)
+    getHistoryDocs(): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
+      return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(`${this.apiUrl}/history-docs`).pipe(
+      catchError(this.handleError)
+      );
+  }
+
+
 
     // Fetch single form by ID
     getEmployeeById(employeeCode: string): Observable<Employee> {

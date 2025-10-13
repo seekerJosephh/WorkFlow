@@ -113,16 +113,6 @@
           displayExpr="name">
         </dxo-lookup>
       </dxi-column>
-      <!-- <dxi-column
-        caption="Actions"
-        type="buttons"
-        [hidingPriority]="0">
-        <dxi-button
-          text="View"
-          cssClass="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
-          (onClick)="openPreview($event)">
-        </dxi-button>
-      </dxi-column> -->
     </dx-data-grid>
   </div>
 
@@ -137,8 +127,8 @@
   </div>
 
   <!-- Preview Modal (Unchanged) -->
-  <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+  <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto overflow-x-auto">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-7xl w-full max-h-[80vh] overflow-y-auto">
       <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">
         Preview Request Application Form (ID: {{ selectedDoc.Id }})
       </label>
@@ -278,19 +268,19 @@
       </div>
 
       <!-- Prepared By and Checked By -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-          <p class="text-sm">{{ selectedDoc.PreparedBy || 'N/A' }}</p>
+        <label class="block text-lg font-bold text-red-900 mb-4">Prepare By</label>
+          <p class="block text-sm font-semibold text-blue-900 mb-1">{{ selectedDoc.PreparedBy || 'N/A' }}</p>
         </div>
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
           <p class="text-sm">{{ selectedDoc.CheckedBy || 'N/A' }}</p>
         </div>
-      </div>
+      </div> -->
 
       <!-- IT Section -->
-      <div class="mb-6">
+      <!-- <div class="mb-6">
         <label class="block text-lg font-bold text-red-900 mb-4">IT Section</label>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
@@ -309,19 +299,73 @@
             <label class="block text-sm font-semibold text-blue-900 mb-1">Approved by</label>
             <p class="text-sm">{{ selectedDoc.ITApprovedBy || 'N/A' }}</p>
           </div>
-        </div>
-      </div>
+        </div> -->
+      <!-- </div> -->
 
       <!-- Statuses -->
       <div class="mb-6">
         <label class="block text-lg font-bold text-red-900 mb-4">Statuses</label>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <p><strong>Request Status:</strong> <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus || 'Pending' }}</span></p>
-          <p><strong>IT Prepared:</strong> <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus || 'Pending' }}</span></p>
-          <p><strong>IT Checked:</strong> <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus || 'Pending' }}</span></p>
-          <p><strong>IT Verified:</strong> <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus || 'Pending' }}</span></p>
-          <p><strong>IT Approved:</strong> <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus || 'Pending' }}</span></p>
-          <p><strong>Overall:</strong> <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus || 'Pending' }}</span></p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead>
+              <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                <th class="px-4 py-3">Approval Step</th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Approval Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">Request Status</td>
+                <td class="px-4 py-2">{{ selectedDoc.CheckedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.RequestCheckedDate ? (selectedDoc.RequestCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Prepared</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITPreparedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITPreparedDate ? (selectedDoc.ITPreparedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Checked</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITCheckedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITCheckedDate ? (selectedDoc.ITCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Verified</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITVerifiedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITVerifiedDate ? (selectedDoc.ITVerifiedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Approved</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITApprovedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITApprovedDate ? (selectedDoc.ITApprovedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">Overall</td>
+                <td class="px-4 py-2">{{ selectedDoc.OverallBy || '-' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus || 'Pending' }}</span>
+                </td>
+                <!-- <td class="px-4 py-2">{{ selectedDoc.OverallDate ? (selectedDoc.OverallDate | date: 'yyyy-MM-dd') : '-' }}</td> -->
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

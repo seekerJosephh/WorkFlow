@@ -68,7 +68,7 @@ export class ViewPendingComponent implements OnInit {
 
 onRowClick(e: any): void {
   console.log('Row clicked:', e.data);
-  this.openPreview(e); // Reuse openPreview with the row click event
+  this.openPreview(e); 
 }
 
   openPreview(e: any): void {

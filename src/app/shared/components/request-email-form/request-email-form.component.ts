@@ -40,10 +40,10 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       users: this.fb.array([this.createUserRow()]),
       preparedBy: ['', [Validators.required, Validators.maxLength(50)]],
       checkedBy: ['', [Validators.required, Validators.maxLength(50)]],
-      ITpreparedBy: ['Mr.A', [Validators.required, Validators.maxLength(50)]],
-      ITcheckedBy: ['Mr.B', [Validators.required, Validators.maxLength(50)]],
-      ITverifiedBy: ['Mr.C', [Validators.required, Validators.maxLength(50)]],
-      ITapprovedBy: ['Mr.D', [Validators.required, Validators.maxLength(50)]],
+      ITpreparedBy: ['Mr. Kosal Khlang', [Validators.required, Validators.maxLength(50)]],
+      ITcheckedBy: ['Mr. Dara Manh', [Validators.required, Validators.maxLength(50)]],
+      ITverifiedBy: ['Mr. Sambath Prum', [Validators.required, Validators.maxLength(50)]],
+      ITapprovedBy: ['Mr. Seangdy Thy', [Validators.required, Validators.maxLength(50)]],
       purpose: ['', [Validators.required, Validators.maxLength(200)]],
       usersRefer: [[]]
     });
@@ -87,9 +87,9 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       classification: ['New registration', Validators.required],
       isEmail: [false],
       isADUser: [false],
-      id: ['', [Validators.required,]],
-      idBeforeChange: ['', ],
-      idAfterChange: ['', ],
+      id: ['', [Validators.required]],
+      // idBeforeChange: ['', ],
+      // idAfterChange: ['', ],
       sex: ['', Validators.required],
       sexBeforeChange: [''],
       sexAfterChange: [''],
@@ -99,12 +99,12 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       familyName: ['', Validators.required],
       familyNameBeforeChange: [''],
       familyNameAfterChange: [''],
-      section: ['', Validators.required],
-      sectionBeforeChange: [''],
-      sectionAfterChange: [''],
       position: ['', Validators.required],
       positionBeforeChange: [''],
       positionAfterChange: [''],
+      section: ['', Validators.required],
+      sectionBeforeChange: [''],
+      sectionAfterChange: [''],
       beforeChange: [''],
       afterChange: ['']
     });
@@ -114,7 +114,6 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
 
     userGroup.get('classification')?.valueChanges.subscribe(value => {
       const fields = [
-        'idBeforeChange', 'idAfterChange',
         'sexBeforeChange', 'sexAfterChange',
         'firstNameBeforeChange', 'firstNameAfterChange',
         'familyNameBeforeChange', 'familyNameAfterChange',
@@ -126,7 +125,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       fields.forEach(field => {
         const control = userGroup.get(field);
         if (value === 'Change') {
-          control?.setValidators([Validators.required,]); // Add pattern for id fields
+          control?.setValidators([Validators.required]); 
           control?.updateValueAndValidity();
         } else {
           control?.clearValidators();
@@ -135,21 +134,19 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
         }
       });
 
-      const requiredFields = ['id', 'sex', 'firstName', 'familyName', 'section', 'position'];
+      const requiredFields = ['sex', 'firstName', 'familyName', 'section', 'position'];
       requiredFields.forEach(field => {
         const control = userGroup.get(field);
         if (value !== 'Change') {
-          if (field === 'id') {
-            control?.setValidators([Validators.required,]);
-          } else {
-            control?.setValidators([Validators.required]);
-          }
+          control?.setValidators([Validators.required]);
         } else {
           control?.clearValidators();
           control?.setValue('');
         }
         control?.updateValueAndValidity();
       });
+      userGroup.get('id')?.setValidators([Validators.required]);
+      userGroup.get('id')?.updateValueAndValidity();
     });
 
     return userGroup;
@@ -157,168 +154,75 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
 
   private subscribeToIdChanges(userGroup: FormGroup): void {
     const idControl = userGroup.get('id');
-    const idBeforeChangeControl = userGroup.get('idBeforeChange');
-    const idAfterChangeControl = userGroup.get('idAfterChange');
-
-    // Map sectionName to section dropdown values
     const sectionMap: { [key: string]: string } = {
-      'ADM': 'IT',
-      'ASY': 'Assy',
-      'FC': 'FC',
-      'QA': 'QA'
-      // Add more mappings as needed
+
     };
 
     if (idControl) {
       this.subscriptions.push(
         idControl.valueChanges.subscribe(value => {
-          if (value && userGroup.get('classification')?.value !== 'Change' && /^\d{4}-\d{5}$/.test(value)) {
+          const classification = userGroup.get('classification')?.value;
+          console.log('ID value changed:', value, 'Classification:', classification); 
+
+          // Reset fields before processing to ensure clean state
+          const resetPatchData = {
+            firstName: classification === 'Change' ? '' : '',
+            familyName: classification === 'Change' ? '' : '',
+            section: classification === 'Change' ? '' : '',
+            position: classification === 'Change' ? '' : '',
+            firstNameBeforeChange: classification === 'Change' ? '' : '',
+            familyNameBeforeChange: classification === 'Change' ? '' : '',
+            sectionBeforeChange: classification === 'Change' ? '' : '',
+            positionBeforeChange: classification === 'Change' ? '' : ''
+          };
+          userGroup.patchValue(resetPatchData, { emitEvent: false });
+          console.log('Reset fields with:', resetPatchData); 
+
+          if (value && classification) {
+            console.log('Fetching employee for ID:', value); 
             this.formService.getEmployeeById(value).subscribe({
               next: (response: any) => {
+                console.log('Employee fetch response:', response); 
                 if (response.success && response.data) {
                   const employee = response.data;
                   const names = employee.englishName ? employee.englishName.split(' ') : [''];
                   const firstName = names[0] || '';
                   const familyName = names.slice(1).join(' ') || '';
                   const section = sectionMap[employee.sectionName] || employee.sectionName || '';
-                  userGroup.patchValue({
-                    firstName,
-                    familyName,
-                    section,
-                    position: employee.position || 'Staff'
-                  });
+                  const position = employee.position || 'Staff';
+
+                  const patchData = {
+                    firstName: classification === 'Change' ? '' : firstName,
+                    familyName: classification === 'Change' ? '' : familyName,
+                    section: classification === 'Change' ? '' : section,
+                    position: classification === 'Change' ? '' : position,
+                    firstNameBeforeChange: classification === 'Change' ? firstName : '',
+                    familyNameBeforeChange: classification === 'Change' ? familyName : '',
+                    sectionBeforeChange: classification === 'Change' ? section : '',
+                    positionBeforeChange: classification === 'Change' ? position : ''
+                  };
+
+                  console.log('Patching form with:', patchData); 
+                  userGroup.patchValue(patchData, { emitEvent: false });
                 } else {
-                  userGroup.patchValue({
-                    firstName: '',
-                    familyName: '',
-                    section: '',
-                    position: ''
-                  });
+                  console.log('No employee found for ID:', value); 
+                  userGroup.patchValue(resetPatchData, { emitEvent: false });
                 }
+                this.cdr.markForCheck(); 
                 this.cdr.detectChanges();
               },
               error: (error) => {
                 console.error('Error fetching employee for ID:', value, error);
-                userGroup.patchValue({
-                  firstName: '',
-                  familyName: '',
-                  section: '',
-                  position: ''
-                });
+                console.log('Error occurred, resetting fields with:', resetPatchData); 
+                userGroup.patchValue(resetPatchData, { emitEvent: false });
+                this.cdr.markForCheck(); 
                 this.cdr.detectChanges();
               }
             });
-          } else if (value && !/^\d{4}-\d{5}$/.test(value)) {
-            userGroup.patchValue({
-              firstName: '',
-              familyName: '',
-              section: '',
-              position: ''
-            });
-            this.cdr.detectChanges();
-          }
-        })
-      );
-    }
-
-    if (idBeforeChangeControl) {
-      this.subscriptions.push(
-        idBeforeChangeControl.valueChanges.subscribe(value => {
-          if (value && userGroup.get('classification')?.value === 'Change' && /^\d{4}-\d{5}$/.test(value)) {
-            this.formService.getEmployeeById(value).subscribe({
-              next: (response: any) => {
-                if (response.success && response.data) {
-                  const employee = response.data;
-                  const names = employee.englishName ? employee.englishName.split(' ') : [''];
-                  const firstNameBeforeChange = names[0] || '';
-                  const familyNameBeforeChange = names.slice(1).join(' ') || '';
-                  const sectionBeforeChange = sectionMap[employee.sectionName] || employee.sectionName || '';
-                  userGroup.patchValue({
-                    firstNameBeforeChange,
-                    familyNameBeforeChange,
-                    sectionBeforeChange,
-                    positionBeforeChange: employee.position || 'Staff'
-                  });
-                } else {
-                  userGroup.patchValue({
-                    firstNameBeforeChange: '',
-                    familyNameBeforeChange: '',
-                    sectionBeforeChange: '',
-                    positionBeforeChange: ''
-                  });
-                }
-                this.cdr.detectChanges();
-              },
-              error: (error) => {
-                console.error('Error fetching employee for ID Before Change:', value, error);
-                userGroup.patchValue({
-                  firstNameBeforeChange: '',
-                  familyNameBeforeChange: '',
-                  sectionBeforeChange: '',
-                  positionBeforeChange: ''
-                });
-                this.cdr.detectChanges();
-              }
-            });
-          } else if (value && !/^\d{4}-\d{5}$/.test(value)) {
-            userGroup.patchValue({
-              firstNameBeforeChange: '',
-              familyNameBeforeChange: '',
-              sectionBeforeChange: '',
-              positionBeforeChange: ''
-            });
-            this.cdr.detectChanges();
-          }
-        })
-      );
-    }
-
-    if (idAfterChangeControl) {
-      this.subscriptions.push(
-        idAfterChangeControl.valueChanges.subscribe(value => {
-          if (value && userGroup.get('classification')?.value === 'Change' && /^\d{4}-\d{5}$/.test(value)) {
-            this.formService.getEmployeeById(value).subscribe({
-              next: (response: any) => {
-                if (response.success && response.data) {
-                  const employee = response.data;
-                  const names = employee.englishName ? employee.englishName.split(' ') : [''];
-                  const firstNameAfterChange = names[0] || '';
-                  const familyNameAfterChange = names.slice(1).join(' ') || '';
-                  const sectionAfterChange = sectionMap[employee.sectionName] || employee.sectionName || '';
-                  userGroup.patchValue({
-                    firstNameAfterChange,
-                    familyNameAfterChange,
-                    sectionAfterChange,
-                    positionAfterChange: employee.position || 'Staff'
-                  });
-                } else {
-                  userGroup.patchValue({
-                    firstNameAfterChange: '',
-                    familyNameAfterChange: '',
-                    sectionAfterChange: '',
-                    positionAfterChange: ''
-                  });
-                }
-                this.cdr.detectChanges();
-              },
-              error: (error) => {
-                console.error('Error fetching employee for ID After Change:', value, error);
-                userGroup.patchValue({
-                  firstNameAfterChange: '',
-                  familyNameAfterChange: '',
-                  sectionAfterChange: '',
-                  positionAfterChange: ''
-                });
-                this.cdr.detectChanges();
-              }
-            });
-          } else if (value && !/^\d{4}-\d{5}$/.test(value)) {
-            userGroup.patchValue({
-              firstNameAfterChange: '',
-              familyNameAfterChange: '',
-              sectionAfterChange: '',
-              positionAfterChange: ''
-            });
+          } else {
+            console.log('ID empty or no classification, resetting fields with:', resetPatchData); 
+            userGroup.patchValue(resetPatchData, { emitEvent: false });
+            this.cdr.markForCheck(); 
             this.cdr.detectChanges();
           }
         })
@@ -408,16 +312,17 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   }
 
   saveDocument(): void {
-    if (this.emailForm.valid) {
+    if (this.emailForm) {
       this.isPreviewVisible = true;
       this.submissionStatus = null;
       this.submissionMessage = '';
       this.submissionDetails = '';
-    } else {
-      this.submissionStatus = 'error';
-      this.submissionMessage = 'Form is invalid';
-      this.submissionDetails = 'Please fill out all required fields correctly';
-    }
+    } 
+    // else {
+    //   this.submissionStatus = 'error';
+    //   this.submissionMessage = 'Form is invalid';
+    //   this.submissionDetails = 'Please fill out all required fields correctly';
+    // }
   }
 
   backToEdit(): void {
@@ -428,7 +333,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.emailForm.valid) {
+    if (this.emailForm) {
       const formData: FormSubmission = this.emailForm.value;
       console.log('Submitting form with payload:', JSON.stringify(formData, null, 2));
       this.formService.submitForm(formData).subscribe({
@@ -444,10 +349,10 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
             purpose: '',
             preparedBy: '',
             checkedBy: '',
-            ITpreparedBy: 'Mr.A',
-            ITcheckedBy: 'Mr.B',
-            ITverifiedBy: 'Mr.C',
-            ITapprovedBy: 'Mr.D',
+            ITpreparedBy: 'Mr. Kosal Khlang',
+            ITcheckedBy: 'Mr. Dara Manh',
+            ITverifiedBy: 'Mr. Sambath Prum',
+            ITapprovedBy: 'Mr. Seangdy Thy',
             users: [this.createUserRow().value],
             usersRefer: []
           });

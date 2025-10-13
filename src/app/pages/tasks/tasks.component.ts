@@ -1,52 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
+// src/app/pages/tasks/tasks.component.ts
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DxDataGridModule, DxDataGridComponent, DxButtonModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
+import { FormService, PendingDoc } from 'src/app/shared/services/request-email-form.service';
 
 @Component({
   templateUrl: './tasks.component.html',
   standalone: true,
-  imports: [DxDataGridModule],
+  imports: [CommonModule, DxDataGridModule, DxButtonModule],
 })
 export class TasksComponent implements OnInit {
   @ViewChild(DxDataGridComponent) dataGrid!: DxDataGridComponent;
-  dataSource: any;
+  dataSource: PendingDoc[] = [];
   statusOptions: any[];
+  isPreviewOpen = false;
+  selectedDoc: PendingDoc | null = null;
 
-  constructor(private http: HttpClient) {
-    this.dataSource = {
-      store: {
-        type: 'array',
-        key: 'Id',
-        data: [],
-        onBeforeSend: (method: string, ajaxOptions: any) => {
-          ajaxOptions.url = 'http://localhost:3000/api/approved-docs';
-          ajaxOptions.method = 'GET';
-        },
-        load: async () => {
-          try {
-            const response = await firstValueFrom(
-              this.http.get<{ success: boolean; data: any[]; count: number }>(
-                'http://localhost:3000/api/approved-docs'
-              )
-            );
-            console.log('API Response:', response);
-            if (response && response.success) {
-              console.log('DataGrid Data:', response.data);
-              return {
-                data: response.data ?? [],
-                totalCount: response.count ?? 0,
-              };
-            }
-            throw new Error('Failed to load approved documents');
-          } catch (error) {
-            console.error('Error loading approved docs:', error);
-            throw error;
-          }
-        },
-      },
-    };
-
+  constructor(private formService: FormService, private cdr: ChangeDetectorRef) {
     this.statusOptions = [
       { name: 'Pending', value: 'Pending' },
       { name: 'Approved', value: 'Approved' },
@@ -55,7 +26,81 @@ export class TasksComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.dataSource.store.load();
-    this.dataGrid.instance.refresh(); // Force DataGrid refresh
+    await this.loadData();
+    if (this.dataGrid) {
+      this.dataGrid.instance.refresh();
+      this.cdr.detectChanges(); 
+    }
+  }
+
+  async loadData(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.formService.getHistoryDocs());
+      console.log('API Response:', response);
+      if (response && response.success) {
+        this.dataSource = response.data.map(doc => ({
+          ...doc,
+          RequestCheckedStatus: doc.RequestCheckedStatus || 'Pending',
+          ITPreparedStatus: doc.ITPreparedStatus || 'Pending',
+          ITCheckedStatus: doc.ITCheckedStatus || 'Pending',
+          ITVerifiedStatus: doc.ITVerifiedStatus || 'Pending',
+          ITApprovedStatus: doc.ITApprovedStatus || 'Pending',
+          OverallStatus: doc.OverallStatus || 'Approved',
+          Users: doc.Users || [],
+          usersRefer: doc.usersRefer || [],
+        }));
+        console.log('DataGrid Data:', this.dataSource);
+      } else {
+        this.dataSource = [];
+        console.warn('No data returned from API');
+      }
+    } catch (error) {
+      console.error('Error loading approved docs:', error);
+      this.dataSource = [];
+    }
+    this.cdr.detectChanges();
+  }
+
+  onRowClick(e: any): void {
+    console.log('Row clicked:', e.data);
+    this.openPreview(e);
+  }
+
+
+  openPreview(e: any): void {
+    const doc = e.row?.data || e.data;
+    if (doc) {
+      this.selectedDoc = doc;
+      this.isPreviewOpen = true;
+      console.log('Preview opened for form ID:', doc.Id, 'Data:', doc);
+    } else {
+      console.error('No document data found in event:', e);
+    }
+    this.cdr.detectChanges(); 
+  }
+
+  closePreview(): void {
+    this.isPreviewOpen = false;
+    this.selectedDoc = null;
+    console.log('Preview closed');
+    this.cdr.detectChanges();
+  }
+
+  getStatusColor(status: string | undefined): string {
+    const statusLower = status?.toLowerCase() || 'pending';
+    switch (statusLower) {
+      case 'pending':
+        return 'bg-yellow-200 text-yellow-800';
+      case 'approved':
+        return 'bg-green-200 text-green-800';
+      case 'rejected':
+        return 'bg-red-200 text-red-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
+    }
+  }
+
+  isAnyClassificationChange(): boolean {
+    return this.selectedDoc?.Users?.some(user => user.classification === 'Change') || false;
   }
 }

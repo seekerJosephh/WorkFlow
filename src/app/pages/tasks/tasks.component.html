@@ -1,77 +1,305 @@
-<h2 class="content-block">Approved Requests History</h2>
 
-<dx-data-grid
-  class="dx-card wide-card"
-  [dataSource]="dataSource"
-  [showBorders]="true"
-  [focusedRowEnabled]="true"
-  [focusedRowIndex]="0"
-  [columnAutoWidth]="true"
-  [columnHidingEnabled]="false">
+  <h2 class="text-2xl font-bold mb-4">Approved Requests History</h2>
 
-  <dxo-paging [pageSize]="10"></dxo-paging>
-  <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
-  <dxo-filter-row [visible]="true"></dxo-filter-row>
+  <dx-data-grid
+    class="dx-card wide-card"
+    [dataSource]="dataSource.length ? dataSource : []"
+    [showBorders]="true"
+    [focusedRowEnabled]="true"
+    [focusedRowIndex]="0"
+    [columnAutoWidth]="true"
+    [columnHidingEnabled]="false"
+    (onRowClick)="onRowClick($event)"
 
-  <dxi-column
-    dataField="Id"
-    [width]="90"
-    caption="Form ID"
-    [hidingPriority]="2">
-  </dxi-column>
-  <dxi-column
-    dataField="Purpose"
-    [width]="190"
-    caption="Purpose"
-    [hidingPriority]="8">
-  </dxi-column>
-  <dxi-column
-    dataField="OverallStatus"
-    caption="Status"
-    [hidingPriority]="6">
-    <dxo-lookup
-      [dataSource]="statusOptions"
-      valueExpr="value"
-      displayExpr="name">
-    </dxo-lookup>
-  </dxi-column>
-  <dxi-column
-    dataField="RequestCheckedStatus"
-    caption="Request Status"
-    [hidingPriority]="5">
-    <dxo-lookup
-      [dataSource]="statusOptions"
-      valueExpr="value"
-      displayExpr="name">
-    </dxo-lookup>
-  </dxi-column>
-  <dxi-column
-    dataField="ApplicantName"
-    caption="Applicant"
-    [allowSorting]="false"
-    [hidingPriority]="7">
-  </dxi-column>
-  <dxi-column
-    dataField="CreatedAt"
-    caption="Created Date"
-    dataType="date"
-    format="yyyy-MM-dd"
-    [hidingPriority]="3">
-  </dxi-column>
-  <dxi-column
-    dataField="FormDate"
-    caption="Form Date"
-    dataType="date"
-    [hidingPriority]="4">
-  </dxi-column>
-  <dxi-column
-    dataField="Department"
-    caption="Department"
-    [hidingPriority]="1">
-  </dxi-column>
-  <dxi-column
-    dataField="ITApprovedBy"
-    caption="Approved By"
-    [hidingPriority]="0">
-  </dxi-column>
-</dx-data-grid>
+  >
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
+    <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+    <dxi-column
+      dataField="Id"
+      [width]="90"
+      caption="Form ID"
+      [hidingPriority]="2">
+    </dxi-column>
+    <dxi-column
+      dataField="Purpose"
+      [width]="190"
+      caption="Purpose"
+      [hidingPriority]="8">
+    </dxi-column>
+    <dxi-column
+      dataField="ApplicantName"
+      caption="Applicant"
+      [allowSorting]="false"
+      [hidingPriority]="7">
+    </dxi-column>
+    <dxi-column
+      dataField="Department"
+      caption="Section"
+      [hidingPriority]="1">
+    </dxi-column>
+    <dxi-column
+      dataField="OverallStatus"
+      caption="Status"
+      [hidingPriority]="6">
+      <dxo-lookup
+        [dataSource]="statusOptions"
+        valueExpr="value"
+        displayExpr="name">
+      </dxo-lookup>
+    </dxi-column>
+    <dxi-column
+      dataField="RequestCheckedStatus"
+      caption="CheckedBy"
+      [hidingPriority]="5">
+      <dxo-lookup
+        [dataSource]="statusOptions"
+        valueExpr="value"
+        displayExpr="name">
+      </dxo-lookup>
+    </dxi-column>
+
+    <dxi-column
+      dataField="CreatedAt"
+      caption="Created Date"
+      dataType="date"
+      format="yyyy-MM-dd"
+      [hidingPriority]="3">
+    </dxi-column>
+
+    <dxi-column
+      dataField="ITApprovedBy"
+      caption="Approved By"
+      [hidingPriority]="0">
+    </dxi-column>
+  </dx-data-grid>
+
+  <!-- Debug: Display raw dataSource for troubleshooting -->
+  <!-- <div class="mt-4" *ngIf="dataSource.length === 0">
+    <p class="text-red-500">No data available in the grid.</p>
+  </div>
+  <div class="mt-4" *ngIf="dataSource.length > 0">
+    <p class="text-green-500">Data available: {{ dataSource.length }} record(s)</p>
+    <pre>{{ dataSource | json }}</pre>
+  </div> -->
+
+  <!-- Preview Modal -->
+  <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto overflow-x-auto">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-7xl w-full max-h-[80vh] overflow-y-auto">
+      <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">
+        Preview Request Application Form (ID: {{ selectedDoc.Id }})
+      </label>
+      
+      <!-- Form Header Information -->
+      <div class="mb-6">
+        <label class="block text-lg font-bold text-red-900 mb-4">Request Section</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Created At:</label>
+            <p class="text-sm">{{ selectedDoc.CreatedAt ? (selectedDoc.CreatedAt | date:'yyyy-MM-dd') : '-' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Department:</label>
+            <p class="text-sm">{{ selectedDoc.Department || '-' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
+            <p class="text-sm">{{ selectedDoc.ApplicantName || '-' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
+            <p class="text-sm">{{ selectedDoc.ApplicantPhone || '-' }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
+        <p class="text-sm">{{ selectedDoc.Purpose || '-' }}</p>
+      </div>
+
+      <!-- Users Table -->
+      <div class="overflow-x-auto mb-8" *ngIf="selectedDoc.Users?.length">
+        <table class="min-w-full border-2 border-gray-400 text-sm">
+          <thead>
+            <tr class="bg-blue-50 text-blue-900 font-semibold">
+              <th class="border-2 border-gray-400 px-4 py-2">Classification</th>
+              <th class="border-2 border-gray-400 px-4 py-2">User Email</th>
+              <th class="border-2 border-gray-400 px-4 py-2">User AD</th>
+              <th class="border-2 border-gray-400 px-4 py-2">ID</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Sex</th>
+              <th class="border-2 border-gray-400 px-4 py-2">First Name</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Family Name</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Section</th>
+              <th class="border-2 border-gray-400 px-4 py-2">Position</th>
+              <th class="border-2 border-gray-400 px-4 py-2" *ngIf="isAnyClassificationChange()">Change Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of selectedDoc.Users">
+              <td class="border-2 border-gray-400 px-4 py-2">{{ user.classification || '-' }}</td>
+              <td class="border-2 border-gray-400 px-4 py-2 text-center">
+                {{ user.isEmail ? '✓' : '✗' }}
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2 text-center">
+                {{ user.isADUser ? '✓' : '✗' }}
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else idDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.idBeforeChange || 'N/A' }}</div>
+                    <div>{{ user.idAfterChange || 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #idDisplay>
+                  {{ user.id || 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else sexDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.sexBeforeChange === 'M' ? 'Male' : user.sexBeforeChange === 'F' ? 'Female' : 'N/A' }}</div>
+                    <div>{{ user.sexAfterChange === 'M' ? 'Male' : user.sexAfterChange === 'F' ? 'Female' : 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #sexDisplay>
+                  {{ user.sex === 'M' ? 'Male' : user.sex === 'F' ? 'Female' : 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else firstNameDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.firstNameBeforeChange || 'N/A' }}</div>
+                    <div>{{ user.firstNameAfterChange || 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #firstNameDisplay>
+                  {{ user.firstName || 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else familyNameDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.familyNameBeforeChange || 'N/A' }}</div>
+                    <div>{{ user.familyNameAfterChange || 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #familyNameDisplay>
+                  {{ user.familyName || 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else sectionDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.sectionBeforeChange || 'N/A' }}</div>
+                    <div>{{ user.sectionAfterChange || 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #sectionDisplay>
+                  {{ user.section || 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2">
+                <ng-container *ngIf="user.classification === 'Change'; else positionDisplay">
+                  <div class="flex flex-col gap-2">
+                    <div>{{ user.positionBeforeChange || 'N/A' }}</div>
+                    <div>{{ user.positionAfterChange || 'N/A' }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #positionDisplay>
+                  {{ user.position || 'N/A' }}
+                </ng-template>
+              </td>
+              <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.classification === 'Change'">
+                <div class="flex flex-col gap-2">
+                  <div>
+                    <label class="block text-xs font-semibold text-blue-900 mb-1">Before Change</label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-blue-900 mb-1">After Change</label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Statuses Table -->
+      <div class="mb-6">
+        <label class="block text-lg font-bold text-red-900 mb-4">Statuses</label>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead>
+              <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                <th class="px-4 py-3">Approval Step</th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Approval Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">Request Status</td>
+                <td class="px-4 py-2">{{ selectedDoc.CheckedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.RequestCheckedDate ? (selectedDoc.RequestCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Prepared</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITPreparedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITPreparedDate ? (selectedDoc.ITPreparedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Checked</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITCheckedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITCheckedDate ? (selectedDoc.ITCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Verified</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITVerifiedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITVerifiedDate ? (selectedDoc.ITVerifiedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Approved</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITApprovedBy || 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.ITApprovedDate ? (selectedDoc.ITApprovedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">Overall</td>
+                <td class="px-4 py-2">{{ selectedDoc.OverallBy }}</td>
+                <td class="px-4 py-2">
+                  <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus || 'Pending' }}</span>
+                </td>
+                <td class="px-4 py-2">{{ selectedDoc.OverallDate ? (selectedDoc.OverallDate | date: 'yyyy-MM-dd') : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <div class="text-center">
+        <dx-button
+          text="Close"
+          type="default"
+          stylingMode="contained"
+          (onClick)="closePreview()">
+        </dx-button>
+      </div>
+    </div>
+  </div>

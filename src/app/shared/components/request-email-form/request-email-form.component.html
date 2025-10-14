@@ -179,7 +179,7 @@
           <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
           <div class="flex items-center gap-2">
             <input formControlName="checkedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal()">Refer</button>
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('checkedBy')">Refer</button>
           </div>
         </div>
       </div>
@@ -188,23 +188,54 @@
     <!-- IT Section (Card Design) -->
     <div class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
       <label class="block text-lg font-bold text-red-900 mb-4">IT Section</label>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-          <p class="text-sm">{{ emailForm.get('ITpreparedBy')?.value }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-          <p class="text-sm">{{ emailForm.get('ITcheckedBy')?.value }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
-          <p class="text-sm">{{ emailForm.get('ITverifiedBy')?.value }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Approved by</label>
-          <p class="text-sm">{{ emailForm.get('ITapprovedBy')?.value }}</p>
-        </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead>
+            <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+              <th class="px-4 py-3">Approval Steps</th>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3" *ngIf="isAdmin">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t">
+              <td class="px-4 py-2">IT Prepared</td>
+              <td class="px-4 py-2">
+                <input formControlName="ITpreparedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+              </td>
+              <td class="px-4 py-2" *ngIf="isAdmin">
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITpreparedBy')">Refer</button>
+              </td>
+            </tr>
+            <tr class="border-t">
+              <td class="px-4 py-2">IT Checked</td>
+              <td class="px-4 py-2">
+                <input formControlName="ITcheckedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+              </td>
+              <td class="px-4 py-2" *ngIf="isAdmin">
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITcheckedBy')">Refer</button>
+              </td>
+            </tr>
+            <tr class="border-t">
+              <td class="px-4 py-2">IT Verified</td>
+              <td class="px-4 py-2">
+                <input formControlName="ITverifiedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+              </td>
+              <td class="px-4 py-2" *ngIf="isAdmin">
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITverifiedBy')">Refer</button>
+              </td>
+            </tr>
+            <tr class="border-t">
+              <td class="px-4 py-2">IT Approved</td>
+              <td class="px-4 py-2">
+                <input formControlName="ITapprovedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+              </td>
+              <td class="px-4 py-2" *ngIf="isAdmin">
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITapprovedBy')">Refer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -352,27 +383,39 @@
       </div>
 
       <!-- Display IT Section -->
-      <div class="mb-6">
+      <div class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
         <label class="block text-lg font-bold text-red-900 mb-4">IT Section</label>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-            <p class="text-sm">{{ emailForm.get('ITpreparedBy')?.value }}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
-            <p class="text-sm">{{ emailForm.get('ITcheckedBy')?.value }}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Verified by</label>
-            <p class="text-sm">{{ emailForm.get('ITverifiedBy')?.value }}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Approved by</label>
-            <p class="text-sm">{{ emailForm.get('ITapprovedBy')?.value }}</p>
-          </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead>
+              <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                <th class="px-4 py-3">Approval Steps</th>
+                <th class="px-4 py-3">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Prepared</td>
+                <td class="px-4 py-2">{{ emailForm.get('ITpreparedBy')?.value || 'N/A' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Checked</td>
+                <td class="px-4 py-2">{{ emailForm.get('ITcheckedBy')?.value || 'N/A' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Verified</td>
+                <td class="px-4 py-2">{{ emailForm.get('ITverifiedBy')?.value || 'N/A' }}</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">IT Approved</td>
+                <td class="px-4 py-2">{{ emailForm.get('ITapprovedBy')?.value || 'N/A' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
+      
 
       <!-- Buttons -->
       <div class="flex gap-4 mt-4 justify-center">

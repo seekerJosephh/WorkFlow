@@ -31,15 +31,18 @@ export interface UserFormData {
 
 export interface FormSubmission {
   date: string;
-  department: any; // Changed to string to match VARCHAR(50)
+  department: any;
   applicantName: string;
   applicantPhone: string;
   purpose: string;
   preparedBy: string;
   checkedBy: string;
+  ITpreparedBy: string;
+  ITcheckedBy: string;
+  ITverifiedBy: string;
+  ITapprovedBy: string;
   users: UserFormData[];
   usersRefer: { id: string; name: string; section: string; email: string }[];
-  ITApprovers: { englishName: string; email: string }[];
 }
 
 

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { SideNavOuterToolbarModule, SideNavInnerToolbarModule, SingleCardModule } from './layouts';
-import { FooterModule, ResetPasswordFormModule, CreateAccountFormModule, ChangePasswordFormModule, LoginFormModule, RequestEmailFormComponent } from './shared/components';
+import { FooterModule, ResetPasswordFormModule, CreateAccountFormModule, ChangePasswordFormModule, LoginFormModule } from './shared/components';
 import { AuthService, ScreenService, AppInfoService } from './shared/services';
 import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
@@ -12,12 +12,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './pages/home/home.component';
 import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
+import { RequestEmailFormComponent } from './shared/components/request-email-form/request-email-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
-    
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,10 +39,10 @@ import { ViewPendingComponent } from './pages/viewPending/viewPending.component'
     ReactiveFormsModule,
     HttpClientModule,
     DxButtonModule,
-    ViewPendingComponent,
-    RequestEmailFormComponent
+    ViewPendingComponent, // Moved to imports
+    RequestEmailFormComponent, // Moved to imports
   ],
   providers: [AuthService, ScreenService, AppInfoService, ThemeService],
-  bootstrap: [AppComponent] 
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

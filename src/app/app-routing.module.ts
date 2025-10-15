@@ -4,7 +4,6 @@ import { DxDataGridModule, DxFormModule, DxFileManagerModule, DxPopupModule } fr
 import { LoginFormComponent, ResetPasswordFormComponent, CreateAccountFormComponent, ChangePasswordFormComponent } from './shared/components';
 import { AuthGuardService } from './shared/services';
 import { HomeComponent } from './pages/home/home.component';
-// import { ProfileComponent } from './pages/profile/profile.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { CreateDocComponent } from './pages/createDoc/createDoc.component';
 import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
@@ -12,6 +11,32 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'login-form',
+    pathMatch: 'full',
+  },
+  {
+    path: 'login-form',
+    component: LoginFormComponent,
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordFormComponent,
+  },
+  {
+    path: 'create-account',
+    component: CreateAccountFormComponent,
+  },
+  {
+    path: 'change-password/:recoveryCode',
+    component: ChangePasswordFormComponent,
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuardService],
+  },
   {
     path: 'tasks',
     component: TasksComponent,
@@ -22,44 +47,14 @@ const routes: Routes = [
     component: CreateDocComponent,
     canActivate: [AuthGuardService],
   },
-  // {
-  //   path: 'profile',
-  //   component: ProfileComponent,
-  //   canActivate: [AuthGuardService],
-  // },
   {
     path: 'viewPending',
     component: ViewPendingComponent,
     canActivate: [AuthGuardService],
   },
   {
-    path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'login-form',
-    component: LoginFormComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordFormComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'create-account',
-    component: CreateAccountFormComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'change-password/:recoveryCode',
-    component: ChangePasswordFormComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: 'login-form',
   },
 ];
 

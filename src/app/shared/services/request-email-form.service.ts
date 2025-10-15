@@ -75,6 +75,7 @@ export interface PendingDoc {
   OverallDate: string | Date | null;
   Users?: any[]; 
   usersRefer?: any[]; 
+  ITRefer?: any[];
 }
 
 export interface Section {

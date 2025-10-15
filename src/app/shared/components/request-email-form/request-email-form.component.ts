@@ -34,7 +34,6 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-
     const today = new Date().toISOString().split('T')[0];
     this.emailForm = this.fb.group({
       date: [today, Validators.required],
@@ -50,7 +49,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       ITapprovedBy: ['', [Validators.required, Validators.maxLength(50)]],
       purpose: ['', [Validators.required, Validators.maxLength(200)]],
       usersRefer: [[]],
-      // ITRefer: [[]]
+      ITRefer: [[]]
     });
     this.referForm = this.fb.group({
       searchId: [''],
@@ -318,7 +317,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
     this.hasSearched = false;
     this.cdr.detectChanges();
   }
-
+  // Set UsersRefer & ITRefer 
   selectPerson(person: Employee) {
     this.emailForm.get(this.currentField)?.setValue(person.englishName);
 
@@ -335,15 +334,34 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       this.emailForm.get('usersRefer')?.setValue(usersRefer);
     } else {
       const ITRefer = this.emailForm.get('ITRefer')?.value || [];
-      if (!ITRefer.some((p: { id: string }) => p.id === person.employeeCode)) {
-        ITRefer.push({
-          id: person.employeeCode,
-          name: person.englishName,
-          section: person.sectionName,
-          email: person.email
-        });
-      }
-      this.emailForm.get('ITRefer')?.setValue(ITRefer);
+      // If the selected person is Narong Nget, replace Kosal Khlang (first entry)
+      // if (person.employeeCode === '0113-1366') { 
+      //   const updatedITRefer = [
+      //     {
+      //       id: person.employeeCode,
+      //       name: person.englishName,
+      //       section: person.sectionName,
+      //       email: person.email
+      //     },
+      //     ...ITRefer.filter((p: { id: string }) => p.id !== '0824-21064' && p.id !== person.employeeCode).slice(0, 3)
+      //   ];
+      //   this.emailForm.get('ITRefer')?.setValue(updatedITRefer);
+      // } else {
+        // For other selections, add to ITRefer if not already present, maintaining max 4 entries
+        if (!ITRefer.some((p: { id: string }) => p.id === person.employeeCode)) {
+          ITRefer.push({
+            id: person.employeeCode,
+            name: person.englishName,
+            section: person.sectionName,
+            email: person.email
+          });
+          // Ensure ITRefer does not exceed 4 entries
+          if (ITRefer.length > 4) {
+            ITRefer.shift(); // Remove the oldest entry
+          }
+        }
+        this.emailForm.get('ITRefer')?.setValue(ITRefer);
+      // }
     }
 
     this.closeReferModal();
@@ -369,52 +387,64 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
     this.submissionDetails = '';
   }
 
-onSubmit() {
-  if (this.emailForm) {
-    const formData: FormSubmission = this.emailForm.value;
-    console.log('Submitting form with payload:', JSON.stringify(formData, null, 2));
-    this.formService.submitForm(formData).subscribe({
-      next: (response) => {
-        this.submissionStatus = 'success';
-        this.submissionMessage = response.message || 'Form submitted successfully';
-        this.submissionDetails = `Request ID: ${response.data.id}, Created At: ${response.data.createdAt}`;
+  onSubmit() {
+    if (this.emailForm) {
+      
+      const currentITRefer = this.emailForm.get('ITRefer')?.value || [];
+      if (currentITRefer.length === 0) {
         const defaultITRefer = [
           { id: '0824-21064', name: 'Kosal Khlang', section: 'IFM', email: 'kosal-khlang@sws.com' },
           { id: '0921-13426', name: 'Dara Manh', section: 'IFM', email: 'dara-manh@sws.com' },
           { id: '0514-3961', name: 'Sambath Prum', section: 'IFM', email: 'sambath-prum@sws.com' },
           { id: '0512-0476', name: 'Seangdy Thy', section: 'ADM', email: 'seangdy-thy@sws.com' }
         ];
-        this.emailForm.reset({
-          date: new Date().toISOString().split('T')[0],
-          department: '',
-          applicantName: '',
-          applicantPhone: '',
-          purpose: '',
-          preparedBy: '',
-          checkedBy: '',
-          ITpreparedBy: 'Kosal Khlang',
-          ITcheckedBy: 'Dara Manh',
-          ITverifiedBy: 'Sambath Prum',
-          ITapprovedBy: 'Seangdy Thy',
-          users: [this.createUserRow().value],
-          usersRefer: [],
-          ITRefer: defaultITRefer
-        });
-        this.users.clear();
-        this.users.push(this.createUserRow());
-        this.isPreviewVisible = false;
-      },
-      error: (error) => {
-        this.submissionStatus = 'error';
-        this.submissionMessage = error.error?.message || 'Failed to submit form';
-        this.submissionDetails = error.error ? JSON.stringify(error.error, null, 2) : 'No additional details';
-        console.error('Submission error:', error);
+        this.emailForm.get('ITRefer')?.setValue(defaultITRefer);
       }
-    });
-  } else {
-    this.submissionStatus = 'error';
-    this.submissionMessage = 'Form is invalid';
-    this.submissionDetails = 'Please fill out all required fields correctly';
+
+      const formData: FormSubmission = this.emailForm.value;
+      console.log('Submitting form with payload:', JSON.stringify(formData, null, 2));
+      this.formService.submitForm(formData).subscribe({
+        next: (response) => {
+          this.submissionStatus = 'success';
+          this.submissionMessage = response.message || 'Form submitted successfully';
+          this.submissionDetails = `Request ID: ${response.data.id}, Created At: ${response.data.createdAt}`;
+          const defaultITRefer = [
+            { id: '0824-21064', name: 'Kosal Khlang', section: 'IFM', email: 'kosal-khlang@sws.com' },
+            { id: '0921-13426', name: 'Dara Manh', section: 'IFM', email: 'dara-manh@sws.com' },
+            { id: '0514-3961', name: 'Sambath Prum', section: 'IFM', email: 'sambath-prum@sws.com' },
+            { id: '0512-0476', name: 'Seangdy Thy', section: 'ADM', email: 'seangdy-thy@sws.com' }
+          ];
+          this.emailForm.reset({
+            date: new Date().toISOString().split('T')[0],
+            department: '',
+            applicantName: '',
+            applicantPhone: '',
+            purpose: '',
+            preparedBy: '',
+            checkedBy: '',
+            ITpreparedBy: 'Kosal Khlang',
+            ITcheckedBy: 'Dara Manh',
+            ITverifiedBy: 'Sambath Prum',
+            ITapprovedBy: 'Seangdy Thy',
+            users: [this.createUserRow().value],
+            usersRefer: [],
+            ITRefer: defaultITRefer
+          });
+          this.users.clear();
+          this.users.push(this.createUserRow());
+          this.isPreviewVisible = false;
+        },
+        error: (error) => {
+          this.submissionStatus = 'error';
+          this.submissionMessage = error.error?.message || 'Failed to submit form';
+          this.submissionDetails = error.error ? JSON.stringify(error.error, null, 2) : 'No additional details';
+          console.error('Submission error:', error);
+        }
+      });
+    } else {
+      this.submissionStatus = 'error';
+      this.submissionMessage = 'Form is invalid';
+      this.submissionDetails = 'Please fill out all required fields correctly';
+    }
   }
-}
 }

@@ -1,10 +1,8 @@
 <form class="login-form" (submit)="onSubmit($event)">
   <dx-form [formData]="formData" [disabled]="loading">
-
-    <dxi-item dataField="email" editorType="dxTextBox"
-      [editorOptions]="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }">
-      <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
-      <dxi-validation-rule type="email" message="Email is invalid"></dxi-validation-rule>
+    <dxi-item dataField="username" editorType="dxTextBox"
+      [editorOptions]="{ stylingMode: 'filled', placeholder: 'Username' }">
+      <dxi-validation-rule type="required" message="Username is required"></dxi-validation-rule>
       <dxo-label [visible]="false"></dxo-label>
     </dxi-item>
 
@@ -44,6 +42,5 @@
         </span>
       </div>
     </ng-container>
-
   </dx-form>
 </form>

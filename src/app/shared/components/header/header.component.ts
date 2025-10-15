@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent  {
   @Output()
   menuToggle = new EventEmitter<boolean>();
 
@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
     text: 'Logout',
     icon: 'runner',
     onClick: () => {
-      this.authService.logOut();
+      this.authService.logout();
     }
   }];
   
@@ -48,9 +48,9 @@ export class HeaderComponent implements OnInit {
   }
   
 
-  ngOnInit() {
-    this.authService.getUser().then((e) => this.user = e.data);
-  }
+  // ngOnInit() {
+  //   this.authService.getUser().then((e) => this.user = e.data);
+  // }
 
   toggleMenu = () => {
     this.menuToggle.emit();

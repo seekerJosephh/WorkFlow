@@ -46,7 +46,9 @@ export class ViewPendingComponent implements OnInit {
             ITApprovedStatus: doc.ITApprovedStatus || 'Pending',
             OverallStatus: doc.OverallStatus || 'Pending',
             Users: doc.Users || [],
-            usersRefer: doc.usersRefer || []
+            usersRefer: doc.usersRefer || [],
+            ITRefer: doc.ITRefer || []
+            
           }));
           this.totalCount = response.count;
         } else {

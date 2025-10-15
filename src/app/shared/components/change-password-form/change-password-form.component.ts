@@ -33,10 +33,10 @@ export class ChangePasswordFormComponent implements OnInit {
     const result = await this.authService.changePassword(password, this.recoveryCode);
     this.loading = false;
 
-    if (result.isOk) {
+    if (result) {
       this.router.navigate(['/login-form']);
     } else {
-      notify(result.message, 'error', 2000);
+      notify('Password change failed', 'error', 2000);
     }
   }
 

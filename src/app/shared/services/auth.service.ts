@@ -129,17 +129,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string, rememberMe: boolean): Observable<boolean> {
-    const loginUrl = 'http://localhost:3000/api/login'; // Update with your backend URL
-    return this.http.post<{ success: boolean, message?: string, data?: { token: string } }>(loginUrl, { username, password }).pipe(
+  login(username: string, password: string): Observable<boolean> {
+    const loginUrl = 'http://localhost:3000/api/login'; 
+    return this.http.post<{ success: boolean, message?: string, data?: { token: string, role: string } }>(loginUrl, { username, password }).pipe(
       map((response) => {
         if (response.success && response.data?.token) {
           this.loggedIn = true;
-          if (rememberMe) {
-            localStorage.setItem('authToken', response.data.token);
-          } else {
-            sessionStorage.setItem('authToken', response.data.token);
-          }
+          localStorage.setItem('authToken', response.data.token);
+          localStorage.setItem('userRole', response.data.role);
+          sessionStorage.setItem('authToken', response.data.token);
           return true;
         }
         return false;
@@ -150,7 +148,7 @@ export class AuthService {
       })
     );
   }
-
+  
   logout(): void {
     this.loggedIn = false;
     localStorage.removeItem('authToken');
@@ -253,9 +251,6 @@ export class AuthService {
 //     }
 //   }
 // }
-
-
-
 
 @Injectable({
   providedIn: 'root',

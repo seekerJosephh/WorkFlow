@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { DxDataGridModule, DxButtonModule } from 'devextreme-angular';
 import { FormService, PendingDoc } from 'src/app/shared/services/request-email-form.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-view-pending',
@@ -23,10 +24,22 @@ export class ViewPendingComponent implements OnInit {
     { name: 'Approved', value: 'Approved' },
     { name: 'Rejected', value: 'Rejected' }
   ];
+  userData: any = null; // Store decoded JWT data
 
   constructor(private formService: FormService) {}
 
   ngOnInit(): void {
+    // Decode JWT token to get user data
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        this.userData = jwtDecode(token);
+        console.log('Decoded user data:', this.userData);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+
     this.loadPendingDocs();
   }
 
@@ -34,7 +47,10 @@ export class ViewPendingComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.formService.getPendingDocs().subscribe({
+    const employeeCode = this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A';
+    console.log('Fetching pending docs for Employee Code:', employeeCode);
+
+    this.formService.getPendingDocs(employeeCode).subscribe({
       next: (response) => {
         if (response && response.success) {
           this.pendingDocs = response.data.map(doc => ({
@@ -48,7 +64,6 @@ export class ViewPendingComponent implements OnInit {
             Users: doc.Users || [],
             usersRefer: doc.usersRefer || [],
             ITRefer: doc.ITRefer || []
-            
           }));
           this.totalCount = response.count;
         } else {
@@ -68,10 +83,10 @@ export class ViewPendingComponent implements OnInit {
     });
   }
 
-onRowClick(e: any): void {
-  console.log('Row clicked:', e.data);
-  this.openPreview(e); 
-}
+  onRowClick(e: any): void {
+    console.log('Row clicked:', e.data);
+    this.openPreview(e);
+  }
 
   openPreview(e: any): void {
     console.log('openPreview triggered with event:', e);
@@ -84,6 +99,7 @@ onRowClick(e: any): void {
       console.error('No document data found in event:', e);
     }
   }
+
   closePreview(): void {
     this.isPreviewOpen = false;
     this.selectedDoc = null;

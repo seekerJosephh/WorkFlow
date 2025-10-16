@@ -1,9 +1,9 @@
-// src/app/pages/tasks/tasks.component.ts
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DxDataGridModule, DxDataGridComponent, DxButtonModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { FormService, PendingDoc } from 'src/app/shared/services/request-email-form.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   templateUrl: './tasks.component.html',
@@ -16,6 +16,7 @@ export class TasksComponent implements OnInit {
   statusOptions: any[];
   isPreviewOpen = false;
   selectedDoc: PendingDoc | null = null;
+  userData: any = null; // Store decoded JWT data
 
   constructor(private formService: FormService, private cdr: ChangeDetectorRef) {
     this.statusOptions = [
@@ -26,16 +27,30 @@ export class TasksComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    // Decode JWT token to get user data
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        this.userData = jwtDecode(token);
+        console.log('Decoded user data:', this.userData);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+
     await this.loadData();
     if (this.dataGrid) {
       this.dataGrid.instance.refresh();
-      this.cdr.detectChanges(); 
+      this.cdr.detectChanges();
     }
   }
 
   async loadData(): Promise<void> {
     try {
-      const response = await firstValueFrom(this.formService.getHistoryDocs());
+      const employeeCode = this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A';
+      console.log('Fetching history docs for Employee Code:', employeeCode);
+
+      const response = await firstValueFrom(this.formService.getHistoryDocs(employeeCode));
       console.log('API Response:', response);
       if (response && response.success) {
         this.dataSource = response.data.map(doc => ({
@@ -48,6 +63,7 @@ export class TasksComponent implements OnInit {
           OverallStatus: doc.OverallStatus || 'Approved',
           Users: doc.Users || [],
           usersRefer: doc.usersRefer || [],
+          ITRefer: doc.ITRefer || []
         }));
         console.log('DataGrid Data:', this.dataSource);
       } else {
@@ -66,7 +82,6 @@ export class TasksComponent implements OnInit {
     this.openPreview(e);
   }
 
-
   openPreview(e: any): void {
     const doc = e.row?.data || e.data;
     if (doc) {
@@ -76,7 +91,7 @@ export class TasksComponent implements OnInit {
     } else {
       console.error('No document data found in event:', e);
     }
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
   closePreview(): void {

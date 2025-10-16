@@ -11,20 +11,22 @@
         onClick: toggleMenu
       }">
     </dxi-item>
+    <!-- Logo (unchanged) -->
     <dxi-item
       location="before"
       cssClass="header-title"
-      *ngIf="title"
-      >
+      *ngIf="title">
       <img src="../../../assets/images/SCWSLOGO.png" alt="Logo" style="height: 15px;">
     </dxi-item>
+    <!-- Theme Selector -->
     <dxi-item
-    location="after"
-    menuItemTemplate="themeSelector">
-    <div *dxTemplate="let data of 'item'">
-      <theme-selector></theme-selector>
-    </div>
-  </dxi-item>
+      location="after"
+      menuItemTemplate="themeSelector">
+      <div *dxTemplate="let data of 'item'">
+        <theme-selector></theme-selector>
+      </div>
+    </dxi-item>
+    <!-- User Menu -->
     <dxi-item
       location="after"
       locateInMenu="auto"
@@ -36,13 +38,72 @@
           height="100%"
           stylingMode="text">
           <div *dxTemplate="let data of 'content'">
-            <app-user-panel [user]="user" [menuItems]="userMenuItems" menuMode="context"></app-user-panel>
+            <app-user-panel [user]="user" [userData]="userData" [menuItems]="userMenuItems" menuMode="context"></app-user-panel>
           </div>
         </dx-button>
       </div>
     </dxi-item>
     <div *dxTemplate="let data of 'menuItem'">
-      <app-user-panel [user]="user" [menuItems]="userMenuItems" menuMode="list"></app-user-panel>
+      <app-user-panel [user]="user" [userData]="userData" [menuItems]="userMenuItems" menuMode="list"></app-user-panel>
     </div>
   </dx-toolbar>
+
+  <!-- Profile Popup -->
+  <div *ngIf="isProfilePopupVisible && userData" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto overflow-x-auto">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+      <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">
+        User Profile
+      </label>
+      <div class="mb-6">
+        <label class="block text-lg font-bold text-red-900 mb-4">Profile Information</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Employee ID:</label>
+            <p class="text-sm">{{ userData.empid || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">AD Username:</label>
+            <p class="text-sm">{{ userData.AD || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Employee Code:</label>
+            <p class="text-sm">{{ userData['Employee Code'] || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
+            <p class="text-sm">{{ userData['English Name'] || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Position:</label>
+            <p class="text-sm">{{ userData.Position || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Section:</label>
+            <p class="text-sm">{{ userData['Section Name'] || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Email:</label>
+            <p class="text-sm">{{ userData.Email || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Section ID:</label>
+            <p class="text-sm">{{ userData.sectid || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Role:</label>
+            <p class="text-sm">{{ userData.role || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- Close Button -->
+      <div class="text-center">
+        <dx-button
+          text="Close"
+          type="default"
+          stylingMode="contained"
+          (onClick)="isProfilePopupVisible = false">
+        </dx-button>
+      </div>
+    </div>
+  </div>
 </header>

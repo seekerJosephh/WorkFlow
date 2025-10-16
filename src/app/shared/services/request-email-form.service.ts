@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, throwError, map } from "rxjs";
 
-
 export interface UserFormData {
   classification: string;
   isEmail: boolean;
@@ -34,6 +33,7 @@ export interface FormSubmission {
   department: any;
   applicantName: string;
   applicantPhone: string;
+  applicantEmpCode: string;
   purpose: string;
   preparedBy: string;
   checkedBy: string;
@@ -44,7 +44,6 @@ export interface FormSubmission {
   users: UserFormData[];
   usersRefer: { id: string; name: string; section: string; email: string }[];
 }
-
 
 export interface PendingDoc {
   Id: number;
@@ -73,8 +72,8 @@ export interface PendingDoc {
   ITApprovedDate: string | Date | null;
   OverallBy: string | null;
   OverallDate: string | Date | null;
-  Users?: any[]; 
-  usersRefer?: any[]; 
+  Users?: any[];
+  usersRefer?: any[];
   ITRefer?: any[];
 }
 
@@ -92,66 +91,64 @@ export interface Employee {
   email: string;
 }
 
-
-
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
-
 export class FormService {
-    private apiUrl = 'http://localhost:3000/api';
-    constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:3000/api';
 
-    // Submit form data to server
-    submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
-      return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
-        catchError(this.handleError)
-      );
-    }
+  constructor(private http: HttpClient) {}
 
-    // Fetch section service
-    getSections(): Observable<Section[]> {
-      return this.http.get<{ success: boolean; data: Section[] }>(`${this.apiUrl}/sections`).pipe(
-        map(response => response.data),
-        catchError(this.handleError)
-      );
-    }
-
-    // Fetch Employee
-    getEmployees(): Observable<Employee[]> {
-      return this.http.get<{ success: boolean; data: Employee[] } >(`${this.apiUrl}/employees`).pipe(
-        map(response => response.data),
-        catchError(this.handleError)
-      )
-    }
-
-    // Fetch pending documents
-    getPendingDocs(): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
-        return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(`${this.apiUrl}/pending-docs`).pipe(
-        catchError(this.handleError)
-        );
-    }
-    // Fetch history documents (Approved)
-    getHistoryDocs(): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
-      return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(`${this.apiUrl}/history-docs`).pipe(
+  // Submit form data to server
+  submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
+    return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
       catchError(this.handleError)
-      );
+    );
   }
 
+  // Fetch section service
+  getSections(): Observable<Section[]> {
+    return this.http.get<{ success: boolean; data: Section[] }>(`${this.apiUrl}/sections`).pipe(
+      map(response => response.data),
+      catchError(this.handleError)
+    );
+  }
 
+  // Fetch Employee
+  getEmployees(): Observable<Employee[]> {
+    return this.http.get<{ success: boolean; data: Employee[] }>(`${this.apiUrl}/employees`).pipe(
+      map(response => response.data),
+      catchError(this.handleError)
+    );
+  }
 
-    // Fetch single form by ID
-    getEmployeeById(employeeCode: string): Observable<Employee> {
-      return this.http.get<Employee>(`${this.apiUrl}/employee/${employeeCode}`);
-    }
+  // Fetch pending documents
+  getPendingDocs(employeeCode?: string): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
+    const url = employeeCode ? `${this.apiUrl}/pending-docs?employeeCode=${encodeURIComponent(employeeCode)}` : `${this.apiUrl}/pending-docs`;
+    return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    // Update approval status 
-    updateApproval(id: number, statusData: { status: string; approver: string; section: string }): Observable<any> {
-        return this.http.put(`${this.apiUrl}/forms/${id}/approve`, statusData).pipe(
-        catchError(this.handleError)
-        );
-    }
+  // Fetch history documents (Approved)
+  getHistoryDocs(employeeCode?: string): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
+    const url = employeeCode ? `${this.apiUrl}/history-docs?employeeCode=${encodeURIComponent(employeeCode)}` : `${this.apiUrl}/history-docs`;
+    return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
 
+  // Fetch single form by ID
+  getEmployeeById(employeeCode: string): Observable<Employee> {
+    return this.http.get<Employee>(`${this.apiUrl}/employee/${employeeCode}`);
+  }
+
+  // Update approval status 
+  updateApproval(id: number, statusData: { status: string; approver: string; section: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/forms/${id}/approve`, statusData).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error occurred';

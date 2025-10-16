@@ -23,6 +23,7 @@
     "devextreme": "^22.2.15",
     "devextreme-angular": "^22.2.15",
     "devextreme-schematics": "^1.4.2",
+    "jwt-decode": "^4.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

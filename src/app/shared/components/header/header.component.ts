@@ -11,14 +11,17 @@ import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { currentTheme, getTheme, refreshTheme } from 'devextreme/viz/themes';
 
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+import { DxPopupModule } from 'devextreme-angular';
+import { RequestEmailFormComponent } from '../request-email-form/request-email-form.component';
 @Component({
   selector: 'app-header',
   templateUrl: 'header.component.html',
   styleUrls: ['./header.component.scss']
 })
 
-export class HeaderComponent  {
-  @Output()
+export class HeaderComponent implements OnInit {
+  @Output() 
   menuToggle = new EventEmitter<boolean>();
 
   @Input()
@@ -28,12 +31,16 @@ export class HeaderComponent  {
   title!: string;
 
   user: IUser | null = { email: '' };
+  userData: any = null; 
+  isProfilePopupVisible = false;
+
+
 
   userMenuItems = [{
     text: 'Profile',
     icon: 'user',
     onClick: () => {
-      this.router.navigate(['/profile']);
+      this.isProfilePopupVisible = true;
     }
   },
   {
@@ -41,21 +48,36 @@ export class HeaderComponent  {
     icon: 'runner',
     onClick: () => {
       this.authService.logout();
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      sessionStorage.clear();
+      this.user = null;
+      this.userData = null;
+      this.router.navigate(['/login-form'], { replaceUrl: true });
     }
   }];
-  
+    
   constructor(private authService: AuthService, private router: Router) {
   }
   
 
-  // ngOnInit() {
-  //   this.authService.getUser().then((e) => this.user = e.data);
-  // }
+  ngOnInit() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        this.userData = jwtDecode(token);
+        console.log('Decoded user data:', this.userData);
+        this.user = { email: this.userData.email || '' };
+
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+  }
 
   toggleMenu = () => {
     this.menuToggle.emit();
   }
-  
 }
 
 @NgModule({
@@ -63,8 +85,11 @@ export class HeaderComponent  {
     CommonModule,
     DxButtonModule,
     UserPanelModule,
+    DxPopupModule,
     DxToolbarModule,
-    ThemeSelectorModule
+    ThemeSelectorModule,
+    UserPanelModule,
+    RequestEmailFormComponent
   ],
   declarations: [ HeaderComponent ],
   exports: [ HeaderComponent ]

@@ -13,8 +13,9 @@ import { AuthService } from '../../services';
   styleUrls: ['./login-form.component.scss']
 })
 export class LoginFormComponent {
-  formData: any = { username: '', password: '', rememberMe: false };
+  formData: any = { username: '', password: '' };
   loading = false;
+
 
   constructor(
     private authService: AuthService,
@@ -26,12 +27,12 @@ export class LoginFormComponent {
     e.preventDefault();
     this.loading = true;
 
-    const { username, password, rememberMe } = this.formData;
+    const { username, password } = this.formData;
 
     try {
       // for validate with AD
-      // const result = await this.authService.login(username, password, rememberMe).toPromise();
-      const result = true;
+      const result = await this.authService.login(username, password).toPromise();
+      // const result = true;
       this.loading = false;
       if (result) {
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';

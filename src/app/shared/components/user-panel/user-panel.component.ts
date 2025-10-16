@@ -1,6 +1,5 @@
 import { Component, NgModule, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { IUser } from '../../services/auth.service';
@@ -10,16 +9,11 @@ import { IUser } from '../../services/auth.service';
   templateUrl: 'user-panel.component.html',
   styleUrls: ['./user-panel.component.scss']
 })
-
 export class UserPanelComponent {
-  @Input()
-  menuItems: any;
-
-  @Input()
-  menuMode!: string;
-
-  @Input()
-  user!: IUser | null;
+  @Input() menuItems: any;
+  @Input() menuMode!: string;
+  @Input() user!: IUser | null;
+  @Input() userData: any; // Add userData input for JWT data
 
   constructor() {}
 }
@@ -30,7 +24,7 @@ export class UserPanelComponent {
     DxContextMenuModule,
     CommonModule
   ],
-  declarations: [ UserPanelComponent ],
-  exports: [ UserPanelComponent ]
+  declarations: [UserPanelComponent],
+  exports: [UserPanelComponent]
 })
-export class UserPanelModule { }
+export class UserPanelModule {}

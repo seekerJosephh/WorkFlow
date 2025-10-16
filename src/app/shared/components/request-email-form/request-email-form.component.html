@@ -30,7 +30,8 @@
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
-            <input type="text" formControlName="applicantName" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" formControlName="applicantName" [value]="userData ? userData['English Name'] : 'N/A'" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+             
           </div>
           <div>
             <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
@@ -173,7 +174,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-          <input formControlName="preparedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <input formControlName="preparedBy" type="text" [value]="userData ? userData['English Name'] : 'N/A'" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="relative">
           <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>

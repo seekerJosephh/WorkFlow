@@ -3,7 +3,9 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DxDataGridModule } from 'devextreme-angular';
 import { FormService, FormSubmission, UserFormData, Section, Employee } from '../../services/request-email-form.service';
+import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-request-email-form',
@@ -28,20 +30,40 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   employeeLoadError: string | null = null;
   private subscriptions: Subscription[] = [];
   currentField: string = '';
-  isAdmin: boolean = false; 
+  isAdmin: boolean = false;
+  userData: any = null;
 
-  constructor(private fb: FormBuilder, private formService: FormService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private formService: FormService,
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        this.userData = jwtDecode(token);
+        console.log('Decoded user data:', this.userData);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+
+    const userRole = localStorage.getItem('userRole');
+    this.isAdmin = userRole === 'Admin';
+    console.log('User role:', userRole, 'Is Admin:', this.isAdmin);
 
     const today = new Date().toISOString().split('T')[0];
     this.emailForm = this.fb.group({
       date: [today, Validators.required],
       department: ['', [Validators.required]],
-      applicantName: ['', [Validators.required, Validators.maxLength(50)]],
+      applicantName: [this.userData ? this.userData['English Name'] || 'N/A' : 'N/A', [Validators.required, Validators.maxLength(50)]],
       applicantPhone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      applicantEmpCode: [this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A'], // Add Employee Code
       users: this.fb.array([this.createUserRow()]),
-      preparedBy: ['', [Validators.required, Validators.maxLength(50)]],
+      preparedBy: [this.userData ? this.userData['English Name'] || 'N/A' : 'N/A', [Validators.required, Validators.maxLength(50)]],
       checkedBy: ['', [Validators.required, Validators.maxLength(50)]],
       ITpreparedBy: ['', [Validators.required, Validators.maxLength(50)]],
       ITcheckedBy: ['', [Validators.required, Validators.maxLength(50)]],
@@ -51,6 +73,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       usersRefer: [[]],
       ITRefer: [[]]
     });
+
     this.referForm = this.fb.group({
       searchId: [''],
       searchName: [''],
@@ -59,7 +82,6 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
 
     this.filteredPeople = [];
 
-    // Initialize default ITRefer values
     const defaultITRefer = [
       { id: '0824-21064', name: 'Kosal Khlang', section: 'IFM', email: 'kosal-khlang@sws.com' },
       { id: '0921-13426', name: 'Dara Manh', section: 'IFM', email: 'dara-manh@sws.com' },
@@ -74,7 +96,6 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       ITapprovedBy: 'Seangdy Thy',
       ITRefer: defaultITRefer
     });
-
 
     this.formService.getSections().subscribe({
       next: (sections) => {
@@ -129,44 +150,6 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
     });
 
     this.subscribeToIdChanges(userGroup);
-
-    userGroup.get('classification')?.valueChanges.subscribe(value => {
-      const fields = [
-        'sexBeforeChange', 'sexAfterChange',
-        'firstNameBeforeChange', 'firstNameAfterChange',
-        'familyNameBeforeChange', 'familyNameAfterChange',
-        'sectionBeforeChange', 'sectionAfterChange',
-        'positionBeforeChange', 'positionAfterChange',
-        'beforeChange', 'afterChange'
-      ];
-
-      fields.forEach(field => {
-        const control = userGroup.get(field);
-        if (value === 'Change') {
-          control?.setValidators([Validators.required]);
-          control?.updateValueAndValidity();
-        } else {
-          control?.clearValidators();
-          control?.setValue('');
-          control?.updateValueAndValidity();
-        }
-      });
-
-      const requiredFields = ['sex', 'firstName', 'familyName', 'section', 'position'];
-      requiredFields.forEach(field => {
-        const control = userGroup.get(field);
-        if (value !== 'Change') {
-          control?.setValidators([Validators.required]);
-        } else {
-          control?.clearValidators();
-          control?.setValue('');
-        }
-        control?.updateValueAndValidity();
-      });
-      userGroup.get('id')?.setValidators([Validators.required]);
-      userGroup.get('id')?.updateValueAndValidity();
-    });
-
     return userGroup;
   }
 
@@ -317,7 +300,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
     this.hasSearched = false;
     this.cdr.detectChanges();
   }
-  // Set UsersRefer & ITRefer 
+
   selectPerson(person: Employee) {
     this.emailForm.get(this.currentField)?.setValue(person.englishName);
 
@@ -334,34 +317,18 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       this.emailForm.get('usersRefer')?.setValue(usersRefer);
     } else {
       const ITRefer = this.emailForm.get('ITRefer')?.value || [];
-      // If the selected person is Narong Nget, replace Kosal Khlang (first entry)
-      // if (person.employeeCode === '0113-1366') { 
-      //   const updatedITRefer = [
-      //     {
-      //       id: person.employeeCode,
-      //       name: person.englishName,
-      //       section: person.sectionName,
-      //       email: person.email
-      //     },
-      //     ...ITRefer.filter((p: { id: string }) => p.id !== '0824-21064' && p.id !== person.employeeCode).slice(0, 3)
-      //   ];
-      //   this.emailForm.get('ITRefer')?.setValue(updatedITRefer);
-      // } else {
-        // For other selections, add to ITRefer if not already present, maintaining max 4 entries
-        if (!ITRefer.some((p: { id: string }) => p.id === person.employeeCode)) {
-          ITRefer.push({
-            id: person.employeeCode,
-            name: person.englishName,
-            section: person.sectionName,
-            email: person.email
-          });
-          // Ensure ITRefer does not exceed 4 entries
-          if (ITRefer.length > 4) {
-            ITRefer.shift(); // Remove the oldest entry
-          }
+      if (!ITRefer.some((p: { id: string }) => p.id === person.employeeCode)) {
+        ITRefer.push({
+          id: person.employeeCode,
+          name: person.englishName,
+          section: person.sectionName,
+          email: person.email
+        });
+        if (ITRefer.length > 4) {
+          ITRefer.shift();
         }
-        this.emailForm.get('ITRefer')?.setValue(ITRefer);
-      // }
+      }
+      this.emailForm.get('ITRefer')?.setValue(ITRefer);
     }
 
     this.closeReferModal();
@@ -388,8 +355,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.emailForm) {
-      
+    if (this.emailForm.valid) {
       const currentITRefer = this.emailForm.get('ITRefer')?.value || [];
       if (currentITRefer.length === 0) {
         const defaultITRefer = [
@@ -417,8 +383,9 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
           this.emailForm.reset({
             date: new Date().toISOString().split('T')[0],
             department: '',
-            applicantName: '',
+            applicantName: this.userData ? this.userData['English Name'] || 'N/A' : 'N/A',
             applicantPhone: '',
+            applicantEmpCode: this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A', // Reset Employee Code
             purpose: '',
             preparedBy: '',
             checkedBy: '',

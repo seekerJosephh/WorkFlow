@@ -1,4 +1,5 @@
-<div class="container mx-auto p-6 max-w-6xl" style="overflow-y: auto; scroll-behavior: smooth; max-height: 80vh; border: 2px solid #1E40AF; border-radius: 8px; background-color: #E0E7FF; max-width: 1800px; font-family: 'Aptos Narrow', sans-serif !important;">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer&display=swap" rel="stylesheet">
+<div id="scrollableDiv" class="container mx-auto p-6 max-w-6xl" style="overflow-y: auto; scroll-behavior: smooth; max-height: 80vh; border: 2px solid #1E40AF; border-radius: 8px; background-color: #E0E7FF; max-width: 1800px; font-family: 'Aptos Narrow', sans-serif !important;">
   <h5 class="text-2xl font-bold text-center text-blue-900 mb-2">Application for Create, Change and Delete E-mail/User AD</h5>
   <hr class="border-blue-900 mb-4">
   <form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="bg-white p-8 rounded-xl shadow-lg max-w-full mx-auto">
@@ -18,32 +19,31 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label for="date" class="block text-sm font-semibold text-blue-900 mb-1">Current Date:</label>
-            <input id="date" type="date" formControlName="date" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <input id="date" type="date" formControlName="date" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Section:</label>
-            <select formControlName="department" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Section <span style="color: red;">*</span></label>
+            <select formControlName="department" [disabled]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">Select&nbsp;your&nbsp;Section</option>
               <option *ngIf="sections.length === 0" value="">Loading sections...</option>
               <option *ngFor="let section of sections" [ngValue]="section.sectid">{{ section.SectionCode }}</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Name:</label>
-            <input type="text" formControlName="applicantName" [value]="userData ? userData['English Name'] : 'N/A'" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-             
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Name<span style="color: red;">*</span></label>
+            <input type="text" formControlName="applicantName" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
-            <label class="block text-sm font-semibold text-blue-900 mb-1">Phone:</label>
-            <input type="text" formControlName="applicantPhone" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-semibold text-blue-900 mb-1">Phone<span style="color: red;">*</span></label>
+            <input type="text" formControlName="applicantPhone" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
       </div>
 
       <!-- Purpose of Application -->
       <div class="mb-6">
-        <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
-        <textarea formControlName="purpose" rows="4" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application<span style="color: red;">*</span></label>
+        <textarea formControlName="purpose" rows="4" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-khmer"></textarea>
       </div>
 
       <!-- Table Section -->
@@ -66,20 +66,20 @@
           <tbody formArrayName="users">
             <tr *ngFor="let user of users.controls; let i = index" [formGroupName]="i">
               <td class="border-2 border-gray-400 px-4 py-2">
-                <select formControlName="classification" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select formControlName="classification" [disabled]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   <option value="New registration">New registration</option>
                   <option value="Deletion">Deletion</option>
                   <option value="Change">Change</option>
                 </select>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2 text-center">
-                <input type="checkbox" formControlName="isEmail" class="h-5 w-5 text-blue-600">
+                <input type="checkbox" formControlName="isEmail" [disabled]="isReadOnly" class="h-5 w-5 text-blue-600">
               </td>
               <td class="border-2 border-gray-400 px-4 py-2 text-center">
-                <input type="checkbox" formControlName="isADUser" class="h-5 w-5 text-blue-600">
+                <input type="checkbox" formControlName="isADUser" [disabled]="isReadOnly" class="h-5 w-5 text-blue-600">
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
-                <input formControlName="id" placeholder="( Enter ID )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input formControlName="id" placeholder="( Enter ID )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <div *ngIf="user.get('id')?.invalid && user.get('id')?.touched" class="text-red-600 text-xs mt-1">
                   Please enter a valid ID.
                 </div>
@@ -91,7 +91,7 @@
                 </div>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
-                <select formControlName="sex" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select formControlName="sex" [disabled]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Select Gender</option>
                   <option value="M">Male</option>
                   <option value="F">Female</option>
@@ -100,56 +100,56 @@
               <td class="border-2 border-gray-400 px-4 py-2">
                 <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else firstNameInput">
                   <div>
-                    <input formControlName="firstNameBeforeChange" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input formControlName="firstNameBeforeChange" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   </div>
                   <div>
-                    <input formControlName="firstNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input formControlName="firstNameAfterChange" placeholder="After Change" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   </div>
                 </div>
                 <ng-template #firstNameInput>
-                  <input formControlName="firstName" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <input formControlName="firstName" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
                 <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else familyNameInput">
                   <div>
-                    <input formControlName="familyNameBeforeChange" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input formControlName="familyNameBeforeChange" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   </div>
                   <div>
-                    <input formControlName="familyNameAfterChange" placeholder="After Change" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input formControlName="familyNameAfterChange" placeholder="After Change" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   </div>
                 </div>
                 <ng-template #familyNameInput>
-                  <input formControlName="familyName" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <input formControlName="familyName" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
                 <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else positionInput">
                   <div>
-                    <input formControlName="positionBeforeChange" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100" readonly>
+                    <input formControlName="positionBeforeChange" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
                   </div>
                   <div>
-                    <input formControlName="positionAfterChange" placeholder="( New Position )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
+                    <input formControlName="positionAfterChange" placeholder="( New Position )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
                   </div>
                 </div>
                 <ng-template #positionInput>
-                  <input formControlName="position" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100" readonly>
+                  <input formControlName="position" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2">
                 <div class="flex flex-col gap-2" *ngIf="user.get('classification')?.value === 'Change'; else sectionInput">
                   <div>
-                    <input formControlName="sectionBeforeChange" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100" readonly>
+                    <input formControlName="sectionBeforeChange" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
                   </div>
                   <div>
-                    <select formControlName="sectionAfterChange" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <select formControlName="sectionAfterChange" [disabled]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                       <option value="">New Sections</option>
                       <option *ngFor="let section of sections" [value]="section.SectionCode">{{ section.SectionCode }}</option>
                     </select>
                   </div>
                 </div>
                 <ng-template #sectionInput>
-                  <input formControlName="section" placeholder="( Auto-filled )" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100" readonly>
+                  <input formControlName="section" placeholder="( Auto-filled )" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm bg-gray-100">
                 </ng-template>
               </td>
               <td class="border-2 border-gray-400 px-4 py-2" *ngIf="user.get('classification')?.value === 'Change'">
@@ -166,21 +166,21 @@
           </tbody>
         </table>
         <div class="flex gap-4 mt-4">
-          <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="addUserRow()">Add Row</button>
-          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="deleteUserRow()">Delete Row</button>
+          <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="addUserRow()" [disabled]="isReadOnly">Add Row</button>
+          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="deleteUserRow()" [disabled]="isReadOnly">Delete Row</button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-semibold text-blue-900 mb-1">Prepared by</label>
-          <input formControlName="preparedBy" type="text" [value]="userData ? userData['English Name'] : 'N/A'" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <input formControlName="preparedBy" type="text" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="relative">
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by</label>
+          <label class="block text-sm font-semibold text-blue-900 mb-1">Checked by<span style="color: red;">*</span></label>
           <div class="flex items-center gap-2">
-            <input formControlName="checkedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('checkedBy')">Refer</button>
+            <input formControlName="checkedBy" type="text" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('checkedBy')" [disabled]="isReadOnly">Refer</button>
           </div>
         </div>
       </div>
@@ -202,51 +202,50 @@
             <tr class="border-t">
               <td class="px-4 py-2">IT Prepared</td>
               <td class="px-4 py-2">
-                <input formControlName="ITpreparedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+                <input formControlName="ITpreparedBy" type="text" [readonly]="isReadOnly || !isAdmin" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </td>
               <td class="px-4 py-2" *ngIf="isAdmin">
-                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITpreparedBy')">Refer</button>
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITpreparedBy')" [disabled]="isReadOnly">Refer</button>
               </td>
             </tr>
             <tr class="border-t">
               <td class="px-4 py-2">IT Checked</td>
               <td class="px-4 py-2">
-                <input formControlName="ITcheckedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+                <input formControlName="ITcheckedBy" type="text" [readonly]="isReadOnly || !isAdmin" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </td>
               <td class="px-4 py-2" *ngIf="isAdmin">
-                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITcheckedBy')">Refer</button>
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITcheckedBy')" [disabled]="isReadOnly">Refer</button>
               </td>
             </tr>
             <tr class="border-t">
               <td class="px-4 py-2">IT Verified</td>
               <td class="px-4 py-2">
-                <input formControlName="ITverifiedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+                <input formControlName="ITverifiedBy" type="text" [readonly]="isReadOnly || !isAdmin" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </td>
               <td class="px-4 py-2" *ngIf="isAdmin">
-                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITverifiedBy')">Refer</button>
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITverifiedBy')" [disabled]="isReadOnly">Refer</button>
               </td>
             </tr>
             <tr class="border-t">
               <td class="px-4 py-2">IT Approved</td>
               <td class="px-4 py-2">
-                <input formControlName="ITapprovedBy" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" [readonly]="!isAdmin">
+                <input formControlName="ITapprovedBy" type="text" [readonly]="isReadOnly || !isAdmin" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </td>
               <td class="px-4 py-2" *ngIf="isAdmin">
-                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITapprovedBy')">Refer</button>
+                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="openReferModal('ITapprovedBy')" [disabled]="isReadOnly">Refer</button>
               </td>
             </tr>
-            
           </tbody>
         </table>
       </div>
     </div>
 
     <div class="text-center" style="padding-bottom: 25px;">
-      <button type="button" (click)="saveDocument()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Save&nbsp;Document</button>
+      <button type="button" (click)="saveDocument()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" [disabled]="isReadOnly">Save&nbsp;Document</button>
     </div>
 
     <!-- Preview Card -->
-    <div *ngIf="isPreviewVisible" class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+    <div *ngIf="isPreviewVisible" class="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow" >
       <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">Preview Your Request Application Form</label>
       <div class="mb-6">
         <label class="block text-lg font-bold text-red-900 mb-4">Request&nbsp;Section</label>
@@ -271,7 +270,7 @@
       </div>
       <div class="mb-6">
         <label class="block text-sm font-semibold text-blue-900 mb-1">Purpose of Application</label>
-        <p class="text-sm">{{ emailForm.get('purpose')?.value }}</p>
+        <p class="text-sm font-khmer">{{ emailForm.get('purpose')?.value }}</p>
       </div>
 
       <!-- Preview Table -->
@@ -417,8 +416,6 @@
         </div>
       </div>
 
-      
-
       <!-- Buttons -->
       <div class="flex gap-4 mt-4 justify-center">
         <button type="button" (click)="backToEdit()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Back To Edit</button>
@@ -434,23 +431,23 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-sm font-semibold text-blue-900 mb-1">Employee Code</label>
-              <input formControlName="searchId" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <input formControlName="searchId" type="text" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
               <label class="block text-sm font-semibold text-blue-900 mb-1">Name</label>
-              <input formControlName="searchName" type="text" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <input formControlName="searchName" type="text" [readonly]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
               <label class="block text-sm font-semibold text-blue-900 mb-1">Section</label>
-              <select formControlName="searchSection" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <select formControlName="searchSection" [disabled]="isReadOnly" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All Sections</option>
                 <option *ngFor="let section of sections" [value]="section.SectionCode">{{ section.SectionCode }}</option>
               </select>
             </div>
           </div>
           <div class="flex gap-4 mt-4">
-            <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="searchPeople()">Search</button>
-            <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors" (click)="resetSearch()">Reset</button>
+            <button type="button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" (click)="searchPeople()" [disabled]="isReadOnly">Search</button>
+            <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors" (click)="resetSearch()" [disabled]="isReadOnly">Reset</button>
           </div>
         </form>
         <div *ngIf="isLoadingEmployees" class="text-center text-gray-600">Loading employees...</div>
@@ -483,7 +480,7 @@
           </dx-data-grid>
         </div>
         <div class="text-right mt-4">
-          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="closeReferModal()">Close</button>
+          <button type="button" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors" (click)="closeReferModal()" [disabled]="isReadOnly">Close</button>
         </div>
       </div>
     </div>
@@ -495,3 +492,17 @@
     </div>
   </form>
 </div>
+  <style>
+    #scrollableDiv {
+      overflow-y: auto; /* Enables vertical scrolling */
+      overflow-x: hidden; /* Prevents horizontal scrolling */
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+  </style>
+  <script>
+    const scrollableDiv = document.getElementById('scrollableDiv');
+    scrollableDiv.addEventListener('wheel', (event) => {
+      console.log('Mouse wheel scrolled!', event.deltaY);
+    });
+  </script>

@@ -20,6 +20,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   isReferModalOpen = false;
   hasSearched = false;
   isPreviewVisible = false;
+  isReadOnly = false;
   submissionStatus: 'success' | 'error' | null = null;
   submissionMessage: string = '';
   submissionDetails: string = '';
@@ -32,6 +33,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   currentField: string = '';
   isAdmin: boolean = false;
   userData: any = null;
+  submissions: any;
 
   constructor(
     private fb: FormBuilder,
@@ -60,8 +62,8 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       date: [today, Validators.required],
       department: ['', [Validators.required]],
       applicantName: [this.userData ? this.userData['English Name'] || 'N/A' : 'N/A', [Validators.required, Validators.maxLength(50)]],
-      applicantPhone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      applicantEmpCode: [this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A'], // Add Employee Code
+      applicantPhone: [''],
+      applicantEmpCode: [this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A'],
       users: this.fb.array([this.createUserRow()]),
       preparedBy: [this.userData ? this.userData['English Name'] || 'N/A' : 'N/A', [Validators.required, Validators.maxLength(50)]],
       checkedBy: ['', [Validators.required, Validators.maxLength(50)]],
@@ -69,7 +71,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
       ITcheckedBy: ['', [Validators.required, Validators.maxLength(50)]],
       ITverifiedBy: ['', [Validators.required, Validators.maxLength(50)]],
       ITapprovedBy: ['', [Validators.required, Validators.maxLength(50)]],
-      purpose: ['', [Validators.required, Validators.maxLength(200)]],
+      purpose: ['', [Validators.required]],
       usersRefer: [[]],
       ITRefer: [[]]
     });
@@ -112,7 +114,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.submissions.forEach((sub: { unsubscribe: () => any; }) => sub.unsubscribe());
   }
 
   get users(): FormArray {
@@ -341,17 +343,21 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
   saveDocument(): void {
     if (this.emailForm) {
       this.isPreviewVisible = true;
+      this.isReadOnly = true; // Set readonly state
       this.submissionStatus = null;
       this.submissionMessage = '';
       this.submissionDetails = '';
+      this.cdr.detectChanges();
     }
   }
 
   backToEdit(): void {
     this.isPreviewVisible = false;
+    this.isReadOnly = false; // Revert to editable state
     this.submissionStatus = null;
     this.submissionMessage = '';
     this.submissionDetails = '';
+    this.cdr.detectChanges();
   }
 
   onSubmit() {
@@ -367,7 +373,10 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
         this.emailForm.get('ITRefer')?.setValue(defaultITRefer);
       }
 
-      const formData: FormSubmission = this.emailForm.value;
+      const formData: FormSubmission = {
+        ...this.emailForm.value,
+        selectOnly: false // Ensure selectOnly is included for PrepareSender
+      };
       console.log('Submitting form with payload:', JSON.stringify(formData, null, 2));
       this.formService.submitForm(formData).subscribe({
         next: (response) => {
@@ -385,7 +394,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
             department: '',
             applicantName: this.userData ? this.userData['English Name'] || 'N/A' : 'N/A',
             applicantPhone: '',
-            applicantEmpCode: this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A', // Reset Employee Code
+            applicantEmpCode: this.userData ? this.userData['Employee Code'] || 'N/A' : 'N/A',
             purpose: '',
             preparedBy: '',
             checkedBy: '',
@@ -400,6 +409,7 @@ export class RequestEmailFormComponent implements OnInit, OnDestroy {
           this.users.clear();
           this.users.push(this.createUserRow());
           this.isPreviewVisible = false;
+          this.isReadOnly = false; // Reset readonly after submission
         },
         error: (error) => {
           this.submissionStatus = 'error';

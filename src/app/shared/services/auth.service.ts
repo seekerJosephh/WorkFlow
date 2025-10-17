@@ -130,7 +130,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<boolean> {
-    const loginUrl = 'http://localhost:3000/api/login'; 
+    const loginUrl = 'http://172.16.199.157:3000/api/login'; 
     return this.http.post<{ success: boolean, message?: string, data?: { token: string, role: string } }>(loginUrl, { username, password }).pipe(
       map((response) => {
         if (response.success && response.data?.token) {
@@ -160,7 +160,7 @@ export class AuthService {
   }
 
   async createAccount(username: string, password: string): Promise<{ isOk: boolean, message?: string }> {
-    const createAccountUrl = 'http://localhost:3000/api/create-account';
+    const createAccountUrl = 'http://172.16.199.157:3000/api/create-account';
     try {
       const response = await this.http
         .post<{ success: boolean, message?: string, data?: { username: string } }>(createAccountUrl, { username, password })
@@ -172,7 +172,7 @@ export class AuthService {
   }
 
   async resetPassword(username: string): Promise<{ isOk: boolean, message?: string, recoveryCode?: string }> {
-    const resetPasswordUrl = 'http://localhost:3000/api/reset-password';
+    const resetPasswordUrl = 'http://172.16.199.157:3000/api/reset-password';
     try {
       const response = await this.http
         .post<{ success: boolean, message?: string, data?: { recoveryCode: string } }>(resetPasswordUrl, { username })
@@ -184,7 +184,7 @@ export class AuthService {
   }
 
   async changePassword(password: string, recoveryCode: string): Promise<{ isOk: boolean, message?: string }> {
-    const changePasswordUrl = 'http://localhost:3000/api/change-password';
+    const changePasswordUrl = 'http://172.16.199.157:3000/api/change-password';
     try {
       const response = await this.http
         .post<{ success: boolean, message?: string, data?: { username: string } }>(changePasswordUrl, { password, recoveryCode })
@@ -196,7 +196,7 @@ export class AuthService {
   }
 
   async getUser(): Promise<{ data: any }> {
-    const getUserUrl = 'http://localhost:3000/api/user'; 
+    const getUserUrl = 'http://172.16.199.157:3000/api/user'; 
     try {
       const response = await this.http.get<{ success: boolean, data: any }>(getUserUrl).toPromise();
       if (response?.success) {

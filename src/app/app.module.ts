@@ -39,8 +39,8 @@ import { RequestEmailFormComponent } from './shared/components/request-email-for
     ReactiveFormsModule,
     HttpClientModule,
     DxButtonModule,
-    ViewPendingComponent, // Moved to imports
-    RequestEmailFormComponent, // Moved to imports
+    ViewPendingComponent,
+    RequestEmailFormComponent,
   ],
   providers: [AuthService, ScreenService, AppInfoService, ThemeService],
   bootstrap: [AppComponent],

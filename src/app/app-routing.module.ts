@@ -9,6 +9,9 @@ import { CreateDocComponent } from './pages/createDoc/createDoc.component';
 import { ViewPendingComponent } from './pages/viewPending/viewPending.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ApprovalComponent } from './pages/approvalDoc/approvalDoc.component';
+
+
 
 const routes: Routes = [
   {
@@ -50,6 +53,11 @@ const routes: Routes = [
   {
     path: 'viewPending',
     component: ViewPendingComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'approvalDoc',
+    component: ApprovalComponent,
     canActivate: [AuthGuardService],
   },
   {

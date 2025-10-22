@@ -2453,7 +2453,7 @@
 .dx-button-text {
   display: inline;
   vertical-align: middle;
-  line-height: 23px;
+  /* line-height: 23px; */
   text-transform: uppercase;
   font-weight: 500;
   letter-spacing: .04em;

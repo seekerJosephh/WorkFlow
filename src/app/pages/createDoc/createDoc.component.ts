@@ -88,9 +88,9 @@ export class CreateDocComponent {
   }
 
   confirmClose(e: any) {
-    const result = confirm("Are you sure you want to close the form? Unsaved changes will be lost."); 
+    const result = confirm("Are you sure you want to close the form? Unsaved changes will be lost. "); 
     if (!result) {
-      e.cancel = true; // Prevent the popup from closing
+      e.cancel = true; 
     }
   }
 

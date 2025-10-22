@@ -13,11 +13,15 @@ export const navigation = [
         path: '/createDoc'
       },
       {
-        text: 'View Pending Docs', 
+        text: 'Review', 
         path: '/viewPending' 
       },
       {
-        text: 'Review / Approval',
+        text: 'Approval Document',
+        path: '/approvalDoc'
+      },
+      {
+        text: 'History ',
         path: '/tasks'
       },
 

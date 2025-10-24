@@ -59,10 +59,9 @@ export class ApprovalComponent implements OnInit {
         this.currentEmail = this.userData['Email']?.toLowerCase() || null;
         console.log('Current EmpId:', this.currentEmpId, 'Current Email:', this.currentEmail);
 
-        // Validate Employee Code format (XXXX-XXXXX)
-        if (!this.currentEmpId || !/^\d{4}-\d{5}$/.test(this.currentEmpId)) {
-          this.error = 'Invalid Employee Code format in token. Expected format: XXXX-XXXXX';
-          console.error('Invalid EmpId format:', this.currentEmpId);
+        if (!this.currentEmpId) {
+          this.error = 'Invalid Employee Code in token';
+          console.error('Invalid or missing EmpId:', this.currentEmpId);
           this.router.navigate(['/login']);
           return;
         }
@@ -89,13 +88,7 @@ export class ApprovalComponent implements OnInit {
       const empId = params['empId'];
       console.log('reqId and empId from URL:', { reqId, empId });
       if (reqId && empId) {
-        // Validate URL empId format
-        if (!/^\d{4}-\d{5}$/.test(empId)) {
-          this.error = 'Invalid Employee ID format in URL. Expected format: XXXX-XXXXX';
-          this.loading = false;
-          console.error('Invalid URL EmpId format:', empId);
-          return;
-        }
+        
         if (empId !== this.currentEmpId) {
           this.error = 'Unauthorized: Employee ID mismatch';
           this.loading = false;
@@ -171,6 +164,10 @@ export class ApprovalComponent implements OnInit {
           this.setApprovalComments();
           this.checkCurrentApprover(reqId);
           console.log('Request loaded:', this.selectedDoc);
+          // Debug: Log ApprovalStatus, usersRefer, and ITRefer
+          console.log('ApprovalStatus:', this.selectedDoc.ApprovalStatus);
+          console.log('usersRefer:', this.selectedDoc.usersRefer);
+          console.log('ITRefer:', this.selectedDoc.ITRefer);
         }
         this.loading = false;
       });
@@ -262,36 +259,59 @@ export class ApprovalComponent implements OnInit {
     }
   }
 
-  submitApproval(action: 'Approved' | 'Rejected'): void {
-    if (!this.selectedDoc || !this.currentEmpId || !this.isApprover) {
-      this.error = 'Cannot submit approval: Invalid request or unauthorized';
-      return;
-    }
-
-    const data = {
-      reqId: this.selectedDoc.Id,
-      empId: this.currentEmpId,
-      action,
-      comment: this.comment
-    };
-
-    this.formService.submitApproval(data).subscribe({
-      next: (response) => {
-        console.log('Approval submitted:', response);
-        if (response.success) {
-          this.closePreview();
-          this.loadApprovalDocs();
-          this.comment = '';
-        } else {
-          this.error = response.message || 'Failed to submit approval';
-        }
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to submit approval';
-        console.error('Error submitting approval:', err);
-      }
+submitApproval(action: 'Approved' | 'Rejected'): void {
+  if (!this.selectedDoc || !this.currentEmpId || !this.isApprover) {
+    this.error = 'Cannot submit approval: Invalid request or unauthorized';
+    console.error('submitApproval failed: Invalid state', {
+      selectedDoc: this.selectedDoc,
+      currentEmpId: this.currentEmpId,
+      isApprover: this.isApprover
     });
+    return;
   }
+
+  if (action === 'Rejected' && !this.comment.trim()) {
+    this.error = 'Comment is required for Reject action';
+    console.warn('Reject attempted without comment');
+    return;
+  }
+
+  const data = {
+    reqId: this.selectedDoc.Id,
+    empId: this.currentEmpId,
+    action,
+    comment: this.comment || undefined
+  };
+
+  console.log('Submitting approval:', data);
+
+  this.formService.submitApproval(data).subscribe({
+    next: (response) => {
+      console.log('Approval submitted:', response);
+      if (response.success) {
+        this.closePreview();
+        this.loadApprovalDocs();
+        this.comment = '';
+        this.error = null;
+        // Optional: Handle session termination for Reject
+        if (action === 'Rejected') {
+          console.log('Reject action: Terminating session');
+          // localStorage.removeItem('authToken');
+          this.router.navigate(['/home']);
+        }
+      } else {
+         this.closePreview();
+        this.loadApprovalDocs();
+      }
+    },
+    error: (err) => {
+      console.error('Error submitting approval:', err);
+      if (err.status === 500) {
+        this.error = 'Server error: Unable to process approval due to a database issue. Please contact IT support.';
+      } 
+    }
+  });
+}
 
   onRowClick(e: any): void {
     console.log('Row clicked:', e.data);

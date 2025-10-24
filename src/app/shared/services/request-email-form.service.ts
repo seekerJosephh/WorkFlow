@@ -63,6 +63,11 @@ export interface PendingDoc {
   ITCheckedStatus: string;
   ITVerifiedStatus: string;
   ITApprovedStatus: string;
+  RequestCheckedComment: string | null;
+  ITPreparedComment: string | null;
+  ITCheckedComment: string | null;
+  ITVerifiedComment: string | null;
+  ITApprovedComment: string | null;
   OverallStatus: string;
   Info: string;
   RequestCheckedDate: string | Date | null;
@@ -112,13 +117,14 @@ export class FormService {
 
   constructor(private http: HttpClient) {}
 
+  // Handle Submit From Service
   submitForm(formData: FormSubmission): Observable<{ success: boolean; message: string; data: { id: number; createdAt: string } }> {
     return this.http.post<{ success: boolean; message: string; data: { id: number; createdAt: string } }>(`${this.apiUrl}/submit-form`, formData).pipe(
       tap(response => console.log('submitForm response:', response)),
       catchError(this.handleError)
-    );
+    );  
   }
-
+  // Get Section From Service 
   getSections(): Observable<Section[]> {
     return this.http.get<{ success: boolean; data: Section[] }>(`${this.apiUrl}/sections`).pipe(
       tap(response => console.log('getSections response:', response)),
@@ -126,7 +132,7 @@ export class FormService {
       catchError(this.handleError)
     );
   }
-
+  // Fetch Employee Service
   getEmployees(): Observable<Employee[]> {
     return this.http.get<{ success: boolean; data: Employee[] }>(`${this.apiUrl}/employees`).pipe(
       tap(response => console.log('getEmployees response:', response)),
@@ -134,7 +140,7 @@ export class FormService {
       catchError(this.handleError)
     );
   }
-
+  // Fetch Pending Docs base Employee Login with their username
   getPendingDocs(employeeCode?: string): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
     const url = employeeCode ? `${this.apiUrl}/pending-docs?employeeCode=${encodeURIComponent(employeeCode)}` : `${this.apiUrl}/pending-docs`;
     return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(url).pipe(
@@ -153,7 +159,7 @@ export class FormService {
     );
   }
 
-
+  // Get History Service 
   getHistoryDocs(employeeCode?: string): Observable<{ success: boolean; data: PendingDoc[]; count: number }> {
     const url = employeeCode ? `${this.apiUrl}/history-docs?employeeCode=${encodeURIComponent(employeeCode)}` : `${this.apiUrl}/history-docs`;
     return this.http.get<{ success: boolean; data: PendingDoc[]; count: number }>(url).pipe(
@@ -189,12 +195,14 @@ export class FormService {
 
 
   // Submit approval action
-  submitApproval(data: { empId: string; action: string; comment: string }): Observable<{ success: boolean; message?: string }> {
-    return this.http.post<{ success: boolean; message?: string }>(`${this.apiUrl}/submit-approval`, data).pipe(
+
+  submitApproval(data: { reqId: number; empId: string; action: string; comment?: string }): Observable<{ success: boolean; message?: string }> {
+    return this.http.post<{ success: boolean; message?: string }>(`${this.apiUrl}/approve-action`, data).pipe(
       tap(response => console.log('submitApproval response:', response)),
       catchError(this.handleError)
     );
   }
+
 
   updateApproval(id: number, empId: number, statusData: { status: string; approver: string; section: string }): Observable<any> {
     return this.http.put(`${this.apiUrl}/forms/${id}/approve`, statusData).pipe(

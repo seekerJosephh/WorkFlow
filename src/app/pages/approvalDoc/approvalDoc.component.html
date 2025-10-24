@@ -265,32 +265,36 @@
       </div>
 
       <!-- Approval/Rejection Section (shown only if user is the current approver) -->
-      <div *ngIf="isApprover" class="mb-6">
-        <label class="block text-lg font-bold text-red-900 mb-4">Approval Action</label>
-        <div class="mb-4">
-          <label class="block text-sm font-semibold text-blue-900 mb-1">Comment (optional):</label>
-          <dx-text-area
-            [(value)]="comment"
-            [height]="100"
-            placeholder="Enter your comment here"
-            class="w-full">
-          </dx-text-area>
-        </div>
-        <div class="flex justify-center gap-4">
-          <dx-button
-            text="Approve"
-            type="success"
-            stylingMode="contained"
-            (onClick)="submitApproval('Approved')">
-          </dx-button>
-          <dx-button
-            text="Reject"
-            type="danger"
-            stylingMode="contained"
-            (onClick)="submitApproval('Rejected')">
-          </dx-button>
+    <div *ngIf="isApprover" class="mb-6">
+      <label class="block text-lg font-bold text-red-900 mb-4">Approval Action</label>
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-blue-900 mb-1">Comment (required for Reject):</label>
+        <dx-text-area
+          [(value)]="comment"
+          [height]="100"
+          placeholder="Enter your comment (required for Reject)"
+          class="w-full"
+        ></dx-text-area>
+        <div *ngIf="error && comment.trim().length === 0 && isApprover" class="text-red-600 text-sm mt-2">
+          {{ error }}
         </div>
       </div>
+      <div class="flex justify-center gap-4">
+        <dx-button
+          text="Approve"
+          type="success"
+          stylingMode="contained"
+          (onClick)="submitApproval('Approved')"
+        ></dx-button>
+        <dx-button
+          text="Reject"
+          type="danger"
+          stylingMode="contained"
+
+          (onClick)="submitApproval('Rejected')"
+        ></dx-button>
+      </div>
+    </div>
 
       <!-- Close Button -->
       <div class="text-center">

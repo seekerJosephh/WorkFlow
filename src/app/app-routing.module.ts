@@ -14,11 +14,7 @@ import { ApprovalComponent } from './pages/approvalDoc/approvalDoc.component';
 
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'login-form',
-    pathMatch: 'full',
-  },
+
   {
     path: 'login-form',
     component: LoginFormComponent,
@@ -62,7 +58,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'login-form',
+    redirectTo: 'home',
   },
 ];
 

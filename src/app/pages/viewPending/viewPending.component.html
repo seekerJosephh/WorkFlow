@@ -28,10 +28,11 @@
       [columnAutoWidth]="true"
       [columnHidingEnabled]="false"
       (onRowClick)="onRowClick($event)">
-
       <dxo-paging [pageSize]="10"></dxo-paging>
       <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
       <dxo-filter-row [visible]="true"></dxo-filter-row>
+      <!-- Filter to exclude rejected requests -->
+
 
       <dxi-column
         dataField="Id"
@@ -126,8 +127,8 @@
     </dx-button>
   </div>
 
-  <!-- Preview Modal (Unchanged) -->
-  <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50  flex items-center justify-center z-50 overflow-y-auto overflow-x-auto" style="">
+  <!-- Preview Modal -->
+  <div *ngIf="isPreviewOpen && selectedDoc" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto overflow-x-auto">
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-7xl w-full max-h-[80vh] overflow-y-auto">
       <label class="block text-lg font-bold text-red-900 mb-4 text-center" style="font-size: 30px; padding-bottom: 18px;">
         Preview Request Application Form (ID: {{ selectedDoc.Id }})
@@ -266,7 +267,7 @@
           </tbody>
         </table>
       </div>
-      <!-- For Approval or Denies Section( allow to see only for approval )-->
+
       <!-- Statuses -->
       <div class="mb-6">
         <label class="block text-lg font-bold text-red-900 mb-4">Statuses</label>
@@ -278,6 +279,7 @@
                 <th class="px-4 py-3">Name</th>
                 <th class="px-4 py-3">Status</th>
                 <th class="px-4 py-3">Approval Date</th>
+                <th class="px-4 py-3">Comment</th>
               </tr>
             </thead>
             <tbody>
@@ -288,6 +290,7 @@
                   <span class="{{ getStatusColor(selectedDoc.RequestCheckedStatus) }}">{{ selectedDoc.RequestCheckedStatus || 'Pending' }}</span>
                 </td>
                 <td class="px-4 py-2">{{ selectedDoc.RequestCheckedDate ? (selectedDoc.RequestCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ selectedDoc.RequestCheckedComment || '-' }}</td>
               </tr>
               <tr class="border-t">
                 <td class="px-4 py-2">IT Prepared</td>
@@ -296,6 +299,7 @@
                   <span class="{{ getStatusColor(selectedDoc.ITPreparedStatus) }}">{{ selectedDoc.ITPreparedStatus || 'Pending' }}</span>
                 </td>
                 <td class="px-4 py-2">{{ selectedDoc.ITPreparedDate ? (selectedDoc.ITPreparedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITPreparedComment || '-' }}</td>
               </tr>
               <tr class="border-t">
                 <td class="px-4 py-2">IT Checked</td>
@@ -304,6 +308,7 @@
                   <span class="{{ getStatusColor(selectedDoc.ITCheckedStatus) }}">{{ selectedDoc.ITCheckedStatus || 'Pending' }}</span>
                 </td>
                 <td class="px-4 py-2">{{ selectedDoc.ITCheckedDate ? (selectedDoc.ITCheckedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITCheckedComment || '-' }}</td>
               </tr>
               <tr class="border-t">
                 <td class="px-4 py-2">IT Verified</td>
@@ -312,6 +317,7 @@
                   <span class="{{ getStatusColor(selectedDoc.ITVerifiedStatus) }}">{{ selectedDoc.ITVerifiedStatus || 'Pending' }}</span>
                 </td>
                 <td class="px-4 py-2">{{ selectedDoc.ITVerifiedDate ? (selectedDoc.ITVerifiedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITVerifiedComment || '-' }}</td>
               </tr>
               <tr class="border-t">
                 <td class="px-4 py-2">IT Approved</td>
@@ -320,15 +326,17 @@
                   <span class="{{ getStatusColor(selectedDoc.ITApprovedStatus) }}">{{ selectedDoc.ITApprovedStatus || 'Pending' }}</span>
                 </td>
                 <td class="px-4 py-2">{{ selectedDoc.ITApprovedDate ? (selectedDoc.ITApprovedDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ selectedDoc.ITApprovedComment || '-' }}</td>
               </tr>
-              <tr class="border-t">
+              <!-- <tr class="border-t">
                 <td class="px-4 py-2">Overall</td>
                 <td class="px-4 py-2">{{ '-' }}</td>
                 <td class="px-4 py-2">
                   <span class="{{ getStatusColor(selectedDoc.OverallStatus) }}">{{ selectedDoc.OverallStatus || 'Pending' }}</span>
                 </td>
-                <!-- <td class="px-4 py-2">{{ selectedDoc.OverallDate ? (selectedDoc.OverallDate | date: 'yyyy-MM-dd') : '-' }}</td> -->
-              </tr>
+                <td class="px-4 py-2">{{ selectedDoc.OverallDate ? (selectedDoc.OverallDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                <td class="px-4 py-2">{{ '-' }}</td>
+              </tr> -->
             </tbody>
           </table>
         </div>

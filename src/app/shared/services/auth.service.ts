@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 import { catchError, map, Observable, of } from 'rxjs';
 
 export interface IUser {
@@ -8,11 +9,6 @@ export interface IUser {
   avatarUrl?: string
 }
 
-const defaultPath = '/';
-const defaultUser = {
-  email: 'sandra@example.com',
-  avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png'
-};
 
 @Injectable()
 // export class AuthService {
@@ -259,6 +255,53 @@ export class AuthGuardService implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    // const token = localStorage.getItem ('authToken');
+
+    // if (token) {
+    //   try {
+        
+    //     const decoded: any = jwtDecode(token);
+    //     const currentTIme = Math.floor(Date.now() / 1000);
+
+    //     if (decoded.exp && decoded.exp < currentTIme) {
+    //       console.log('Token expired, clearing localStorage');
+    //       localStorage.removeItem('authToken');
+    //       localStorage.removeItem('userRole');        
+    //       this.router.navigate(['/login-form'], { queryParams: { returnUrl: state.url } });
+    //       return false;
+    //     }
+
+    //     if (!decoded['Employee Code'] || !decoded['Email']) {
+    //       console.log('Invalid token, clearing localStorage');
+    //       localStorage.removeItem('authToken');
+    //       localStorage.removeItem('userRole');
+    //       this.router.navigate(['/login-form'], { queryParams: { returnUrl: state.url } });
+    //       return false;
+    //     }
+
+    //     // if valid token
+    //     return true; 
+
+    //   } catch (error) {
+    //     console.log('Error decoding token: ', error);
+    //     localStorage.removeItem('authToken');
+    //     localStorage.removeItem('userRole');
+    //     this.router.navigate(['/login-form'], { queryParams: { returnUrl: state.url } });
+    //     return false;
+    //   } 
+    // } else {
+    //   console.log('No authToken found, redirecting to login');
+    //   this.router.navigate(['/login-form'], { queryParams: { returnUrl: state.url } });
+    //   return false;
+    // }
+
+
+
+
+
+
+
+
     if (this.authService.isAuthenticated()) {
       return true;
     } else {
